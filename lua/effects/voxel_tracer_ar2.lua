@@ -1,3 +1,10 @@
+--[[
+SDK References:
+
+FX_AR2Tracer
+CFXStaticLine::Draw
+--]]
+
 EFFECT.Mat = Material("effects/gunshiptracer")
 EFFECT.Speed = 8000
 

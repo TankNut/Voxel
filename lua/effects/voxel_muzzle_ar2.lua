@@ -1,7 +1,9 @@
--- SDK References: 
---
--- CTempEnts::MuzzleFlash_Combine_Player
--- CTempEnts::MuzzleFlash_Combine_NPC
+--[[
+SDK References: 
+
+CTempEnts::MuzzleFlash_Combine_Player
+CTempEnts::MuzzleFlash_Combine_NPC
+--]]
 
 EFFECT.VMMats = {}
 EFFECT.WMMats = {}
