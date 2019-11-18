@@ -1,5 +1,5 @@
 return {
-	Mesh = "kv6/meshes/smg2.lua",
+	Mesh = "voxel/meshes/smg2.lua",
 	Offset = Vector(-1, -8, -7),
 	Angle = Angle(180, -90, 0),
 	Attachments = {
