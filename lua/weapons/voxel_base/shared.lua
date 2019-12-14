@@ -51,6 +51,8 @@ if CLIENT then
 	include("cl_vm.lua")
 end
 
+include("sh_recoil.lua")
+
 function SWEP:Initialize()
 	if SERVER then
 		self:PhysicsInitConvex(voxel.GetConvexHull(self.Model, 1))
@@ -61,7 +63,7 @@ function SWEP:Initialize()
 	end
 
 	if CLIENT then
-		self:SetRenderBounds(voxel.GetRenderBounds(self.Model, 1))
+		self:SetRenderBounds(voxel.GetHull(self.Model, 1))
 
 		self.StorePos = self.VMLower.Pos
 		self.StoreAng = self.VMLower.Ang

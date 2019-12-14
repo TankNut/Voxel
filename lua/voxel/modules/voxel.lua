@@ -181,7 +181,7 @@ function GenerateMesh(index, size, grid, center)
 	return obj
 end
 
-function GetRenderBounds(index, scale)
+function GetHull(index, scale)
 	local data = Models[index]
 
 	if not data then

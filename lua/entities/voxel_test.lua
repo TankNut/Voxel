@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-ENT.RenderGroup 			= RENDERGROUP_BOTH
+ENT.RenderGroup 			= RENDERGROUP_OPAQUE
 
 ENT.Base 					= "base_anim"
 ENT.Type 					= "anim"
@@ -14,14 +14,16 @@ ENT.Model 					= "smg"
 ENT.Scale 					= 1
 
 function ENT:Initialize()
+	local mins, maxs = voxel.GetHull(self.Model, self.Scale)
+
+	self.PhysCollide = CreatePhysCollideBox(mins, maxs)
+	self:SetCollisionBounds(mins, maxs)
+
 	if SERVER then
-		self:SetModel("models/props_junk/PopCan01a.mdl")
+		self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
 
-		self:PhysicsInitConvex(voxel.GetConvexHull(self.Model, self.Scale))
-		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:PhysicsInitBox(mins, maxs)
 		self:SetSolid(SOLID_VPHYSICS)
-
-		self:EnableCustomCollisions(true)
 
 		local phys = self:GetPhysicsObject()
 
@@ -31,17 +33,24 @@ function ENT:Initialize()
 	end
 
 	if CLIENT then
-		self:SetRenderBounds(voxel.GetRenderBounds(self.Model, self.Scale))
+		self:SetRenderBounds(mins, maxs)
 	end
 
-	self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+	self:DrawShadow(false)
+
+	self:EnableCustomCollisions(true)
+	--self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+end
+
+if SERVER then
+	function ENT:OnTakeDamage(dmg)
+		debugoverlay.Cross(dmg:GetDamagePosition(), 1)
+	end
 end
 
 if CLIENT then
 	function ENT:Draw()
-		--render.OverrideDepthEnable(true, true)
 		self:DrawModel()
-		--render.OverrideDepthEnable(false, true)
 
 		voxel.DrawDebug(self.Model, self:GetPos(), self:GetAngles(), self.Scale, self)
 	end
@@ -56,12 +65,35 @@ if CLIENT then
 		return {
 			Mesh = data.Mesh,
 			Material = Material("!voxel_" .. self.Model),
-			--Material = Material("models/props_c17/FurnitureFabric003a"),
 			Matrix = matrix
 		}
 	end
 
 	function ENT:OnReloaded()
-		self:SetRenderBounds(voxel.GetRenderBounds(self.Model, self.Scale))
+		self:SetRenderBounds(voxel.GetHull(self.Model, self.Scale))
 	end
+end
+
+function ENT:TestCollision(start, delta, isbox, extends)
+	if not IsValid(self.PhysCollide) then
+		return
+	end
+
+	local max = extends
+	local min = -extends
+
+	max.z = max.z - min.z
+	min.z = 0
+
+	local hit, norm, frac = self.PhysCollide:TraceBox(self:GetPos(), self:GetAngles(), start, start + delta, min, max)
+
+	if not hit then
+		return
+	end
+
+	return {
+		HitPos = hit,
+		Normal = norm,
+		Fraction = frac
+	}
 end
