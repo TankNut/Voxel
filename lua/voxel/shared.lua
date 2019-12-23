@@ -20,3 +20,11 @@ for _, v in pairs(file.Find("voxel/models/*", "LUA")) do
 
 	voxel.Load(index, size, grid, data.Offset, data.Angle, data.Attachments)
 end
+
+hook.Add("SetupMove", "voxel", function(ply, mv)
+	local weapon = ply:GetActiveWeapon()
+
+	if IsValid(weapon) and weapon.SetupMove then
+		weapon:SetupMove(ply, mv)
+	end
+end)

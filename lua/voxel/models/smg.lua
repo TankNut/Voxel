@@ -10,6 +10,10 @@ return {
 		Aim = {
 			Pos = Vector(0.5, 0, 7),
 			Angle = Angle()
+		},
+		Aimpoint = {
+			Pos = Vector(0.5, 0, 7),
+			Angle = Angle()
 		}
 	}
 }

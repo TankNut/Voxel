@@ -39,7 +39,6 @@ function ENT:Initialize()
 	self:DrawShadow(false)
 
 	self:EnableCustomCollisions(true)
-	--self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 end
 
 if SERVER then

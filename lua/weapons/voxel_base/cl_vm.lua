@@ -7,6 +7,13 @@ function SWEP:GetRoll()
 	return math.Clamp((vel:Dot(EyeAngles():Right()) * 0.04) * len / walk, -5, 5)
 end
 
+function SWEP:GetADSTarget(pos, ang)
+	local offset = self.VMOffset
+	local pos2, ang2 = voxel.GetAttachment(self.Model, pos or Vector(), ang or Angle(), 1, "Aim")
+
+	return -offset.Pos - pos2 + Vector(self.AimDistance, 0, 0), ang2
+end
+
 function SWEP:GetBaseVMPos()
 	local roll = self:GetRoll()
 
@@ -14,14 +21,17 @@ function SWEP:GetBaseVMPos()
 		return self.VMLower.Pos, self.VMLower.Ang + Angle(0, 0, roll)
 	end
 
-	if self.Owner:KeyDown(IN_ATTACK2) then
-		local offset = self.VMOffset
-		local pos, ang = voxel.GetAttachment(self.Model, Vector(), Angle(0, 0, roll), 1, "Aim")
-
-		return -offset.Pos - pos + Vector(10, 0, 0), ang
+	if self:AimingDownSights() then
+		return self:GetADSTarget(Vector(), Angle(0, 0, roll))
 	end
 
 	return Vector(), Angle(0, 0, roll)
+end
+
+function SWEP:GetADSFactor()
+	local target = self:GetADSTarget()
+
+	return 1 - (self.StorePos:Distance(target) / Vector():Distance(target))
 end
 
 SWEP.OldEye = Angle()
@@ -120,6 +130,22 @@ function SWEP:GetVMOffset(dt)
 	return pos, ang
 end
 
+SWEP.RecoilFactor = 0
+
+function SWEP:GetVMRecoil()
+	local factor = self:GetADSFactor()
+	local motion = 1 - factor * 0.4
+
+	local ads = Vector(self.RecoilFactor * (self.RecoilFactor - 1) * self.RecoilFactor * motion, 0, 0)
+	local hip = Vector(
+		self.RecoilFactor * (self.RecoilFactor - 1) * 0.3 * motion,
+		math.sin(self.RecoilFactor * math.pi * 2) * 0.008 * motion,
+		self.RecoilFactor * (self.RecoilFactor - 1) * 0.14 * motion
+	)
+
+	return LerpVector(factor, hip, ads) * self.RecoilMult * 10
+end
+
 SWEP.StorePos = Vector()
 SWEP.StoreAng = Angle()
 
@@ -132,7 +158,11 @@ function SWEP:GetVMPos()
 	local basepos, baseang = self:GetBaseVMPos()
 	local offpos, offang = self:GetVMOffset(dt)
 
-	pos = pos + basepos + offpos
+	self.RecoilFactor = math.max(self.RecoilFactor - (dt * 10), 0)
+
+	local recoilpos = self:GetVMRecoil()
+
+	pos = pos + basepos + offpos + recoilpos
 	ang = ang + baseang + offang
 
 	self.StorePos = LerpVector(math.Clamp(dt * 10, 0, 1), self.StorePos, pos)
@@ -148,73 +178,4 @@ function SWEP:GetVMPos()
 	local offset = self.VMOffset
 
 	return LocalToWorld((self.StorePos * offset.Scale) + (offset.Pos * offset.Scale), self.StoreAng, EyePos(), EyeAngles())
-end
-
-function SWEP:GetViewModelPosition()
-	return self:GetVMPos()
-end
-
-function SWEP:PreDrawViewModel()
-	render.ModelMaterialOverride(self.MatOverride)
-end
-
-local mat = Material("reticles/eotech_reddot")
-
-function SWEP:PostDrawViewModel()
-	render.ModelMaterialOverride()
-
-	local pos, ang = self:GetVMPos()
-	local offset = self.VMOffset
-
-	voxel.Draw(self.Model, pos, ang, offset.Scale)
-
-	render.SetStencilEnable(true)
-		render.SetStencilWriteMask(255)
-		render.SetStencilTestMask(255)
-		render.SetStencilReferenceValue(15)
-
-		render.SetStencilPassOperation(STENCIL_REPLACE)
-		render.SetStencilFailOperation(STENCIL_KEEP)
-		render.SetStencilZFailOperation(STENCIL_KEEP)
-
-		render.SetStencilCompareFunction(STENCIL_ALWAYS)
-
-		local attpos, attang = voxel.GetAttachment(self.Model, pos, ang, offset.Scale, "Aim")
-
-		render.SetColorMaterial()
-		render.DrawQuadEasy(attpos, -attang:Forward(), offset.Scale, offset.Scale, ColorAlpha(color_white, 0))
-
-		render.SetStencilCompareFunction(STENCIL_EQUAL)
-
-		render.SetMaterial(mat)
-		render.DrawQuadEasy(attpos + (attang:Forward() * 200), -EyeAngles():Forward(), 5, 5, Color(255, 0, 0), -ang.r)
-	render.SetStencilEnable(false)
-	render.ClearStencil()
-end
-
-function SWEP:GetWorldPos()
-	local pos = self:GetPos()
-	local ang = self:GetAngles()
-
-	if IsValid(self.Owner) then
-		local index = self.Owner:LookupAttachment("anim_attachment_RH")
-		local att = self.Owner:GetAttachment(index)
-
-		if istable(att) then
-			pos = att.Pos
-			ang = att.Ang + Angle(-10, 0, -5)
-		end
-	end
-
-	return pos, ang
-end
-
-function SWEP:DrawWorldModel()
-	render.ModelMaterialOverride(self.MatOverride)
-	self:DrawModel()
-	render.ModelMaterialOverride()
-
-	local pos, ang = self:GetWorldPos()
-
-	voxel.Draw(self.Model, pos, ang, self.VMOffset.Scale)
 end

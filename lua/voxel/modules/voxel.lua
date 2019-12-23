@@ -212,6 +212,16 @@ end
 
 local convar_fov = GetConVar("fov_desired")
 
+function HasAttachment(index, attachment)
+	local data = Models[index]
+
+	if not data then
+		return false
+	end
+
+	return data.Attachments[attachment] and true or false
+end
+
 function GetAttachment(index, pos, ang, size, attachment, fov)
 	local data = Models[index]
 
