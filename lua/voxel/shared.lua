@@ -28,5 +28,3 @@ hook.Add("SetupMove", "voxel", function(ply, mv)
 		weapon:SetupMove(ply, mv)
 	end
 end)
-
-list.Add("NPCUsableWeapons", {class = "voxel_base", title = "Voxel"})
