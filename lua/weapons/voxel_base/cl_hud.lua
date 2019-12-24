@@ -6,6 +6,10 @@ function SWEP:CrosshairVisible()
 		return false
 	end
 
+	if self:IsReloading() then
+		return false
+	end
+
 	if self:AimingDownSights() then
 		return false
 	end

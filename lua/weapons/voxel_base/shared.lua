@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 SWEP.DrawWeaponInfoBox 		= false
-SWEP.DrawAmmo 				= false
+SWEP.DrawAmmo 				= true
 
 SWEP.PrintName 				= "SMG"
 
@@ -18,9 +18,9 @@ SWEP.WorldModel 			= Model("models/weapons/w_smg1.mdl")
 
 SWEP.DrawCrosshair 			= true
 
-SWEP.Primary.ClipSize 		= -1
-SWEP.Primary.DefaultClip 	= -1
-SWEP.Primary.Ammo 			= ""
+SWEP.Primary.ClipSize 		= 30
+SWEP.Primary.DefaultClip 	= 120
+SWEP.Primary.Ammo 			= "SMG1"
 SWEP.Primary.Automatic 		= true
 
 SWEP.Secondary.ClipSize 	= -1
@@ -30,25 +30,39 @@ SWEP.Secondary.Automatic 	= false
 
 SWEP.Model 					= "smg"
 
-SWEP.HoldType 				= "smg"
+SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
+
+SWEP.Damage 				= 29
 
 SWEP.Spread 				= 0.012
 
 SWEP.Delay 					= 0.1
 SWEP.Recoil 				= Vector(0.00005, 0.0125, 0)
-SWEP.RecoilMult 			= 1
+SWEP.RecoilMult 			= 2
 
 SWEP.AimDistance 			= 10
 
+SWEP.FireSound 				= Sound("voxel/smgshoot.wav")
+SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
+
+SWEP.ReloadTime 			= 2.5
+
 SWEP.VMOffset = {
-	Pos = Vector(16, -6, -8),
+	Pos = Vector(12, -6, -8),
 	Scale = 1.2
 }
 
+SWEP.WMOffset = Vector(0, 0, 0)
+
 SWEP.VMLower = {
-	Pos = Vector(0, 5, -3),
+	Pos = Vector(0, 3, -1),
 	Ang = Angle(20, 45, 0)
+}
+
+SWEP.ReloadLower = {
+	Pos = Vector(0, 0, -1),
+	Ang = Angle(30, 0, 0)
 }
 
 AddCSLuaFile("cl_draw.lua")
@@ -62,6 +76,8 @@ if CLIENT then
 end
 
 include("sh_recoil.lua")
+
+include("sv_npc.lua")
 
 function SWEP:Initialize()
 	local mins, maxs = voxel.GetHull(self.Model, self.VMOffset.Scale)
@@ -87,11 +103,14 @@ function SWEP:Initialize()
 	self:DrawShadow(false)
 	self:EnableCustomCollisions(true)
 
+	self:SetHoldType(self.HoldType)
+
 	self.LastThink = CurTime()
 end
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 0, "FireDuration")
+	self:NetworkVar("Float", 1, "FinishReload")
 end
 
 function SWEP:Deploy()
@@ -114,11 +133,22 @@ function SWEP:CanAttack()
 		return false
 	end
 
+	if self:IsReloading() then
+		return false
+	end
+
 	return true
 end
 
 function SWEP:PrimaryAttack()
 	if not self:CanAttack() then
+		return
+	end
+
+	if self:Clip1() <= 0 then
+		self:EmitSound("voxel/empty.wav")
+		self:SetNextPrimaryFire(CurTime() + self.Delay * 2)
+
 		return
 	end
 
@@ -129,7 +159,9 @@ function SWEP:PrimaryAttack()
 		self:StartFiring()
 	end
 
-	math.randomseed(ply:GetCurrentCommand():CommandNumber())
+	if ply:IsPlayer() then
+		math.randomseed(ply:GetCurrentCommand():CommandNumber())
+	end
 
 	if IsFirstTimePredicted() then
 		local ed = EffectData()
@@ -155,16 +187,70 @@ function SWEP:PrimaryAttack()
 		Spread = Vector(0, 0, 0),
 		TracerName = "voxel_tracer_ar2",
 		Tracer = 1,
-		Damage = 11
+		Damage = self.Damage
 	})
 
-	self:DoRecoil()
+	self:TakePrimaryAmmo(1)
 
-	self:EmitSound("NPC_FloorTurret.ShotSounds")
+	if ply:IsPlayer() then
+		self:DoRecoil()
+	end
+
+	self:EmitSound(self.FireSound)
 	self:SetNextPrimaryFire(CurTime() + self.Delay)
 end
 
 function SWEP:SecondaryAttack()
+end
+
+function SWEP:GetReserveAmmo()
+	return self.Owner:GetAmmoCount(self:GetPrimaryAmmoType())
+end
+
+function SWEP:IsReloading()
+	return self:GetFinishReload() > CurTime()
+end
+
+function SWEP:CanReload()
+	if self:GetFinishReload() > CurTime() then
+		return false
+	end
+
+	if self:GetReserveAmmo() <= 0 then
+		return false
+	end
+
+	if self:Clip1() == self.Primary.ClipSize then
+		return false
+	end
+
+	return true
+end
+
+function SWEP:Reload()
+	if not self:CanReload() then
+		return
+	end
+
+	self.Owner:SetAnimation(PLAYER_RELOAD)
+
+	self:EmitSound(self.ReloadSound)
+	self:SetFinishReload(CurTime() + self.ReloadTime)
+end
+
+function SWEP:HandleReload()
+	local finish = self:GetFinishReload()
+
+	if finish != 0 and finish <= CurTime() then
+		self:SetFinishReload(0)
+
+		local clip = self:Clip1()
+		local ammo = math.min(self.Primary.ClipSize - clip, self:GetReserveAmmo())
+
+		self:SetClip1(clip + ammo)
+
+		self.Owner:RemoveAmmo(ammo, self:GetPrimaryAmmoType())
+	end
 end
 
 function SWEP:Think()
@@ -188,6 +274,8 @@ function SWEP:Think()
 		self:SetFireDuration(-1)
 	end
 
+	self:HandleReload()
+
 	self.LastThink = CurTime()
 end
 
@@ -195,10 +283,6 @@ function SWEP:AimingDownSights()
 	local ply = self.Owner
 
 	if self:ShouldLower() then
-		return false
-	end
-
-	if ply:KeyDown(IN_USE) then
 		return false
 	end
 
@@ -214,13 +298,17 @@ end
 function SWEP:GetAimAngle()
 	local ply = self.Owner
 
+	if ply:IsNPC() then
+		return ply:GetAimVector():Angle()
+	end
+
 	return ply:EyeAngles() + ply:GetViewPunchAngles()
 end
 
 function SWEP:ShouldLower()
 	local ply = self.Owner
 
-	if self:IsSprinting() or not ply:OnGround() then
+	if ply:IsPlayer() and self:IsSprinting() or not ply:OnGround() then
 		return true
 	end
 
@@ -242,7 +330,9 @@ function SWEP:IsSprinting()
 end
 
 function SWEP:SetupMove(ply, mv)
-	if self:AimingDownSights() then
+	if self:IsReloading() then
+		mv:SetMaxClientSpeed(ply:GetWalkSpeed())
+	elseif self:AimingDownSights() then
 		mv:SetMaxClientSpeed(ply:GetWalkSpeed() * 0.7)
 	end
 end

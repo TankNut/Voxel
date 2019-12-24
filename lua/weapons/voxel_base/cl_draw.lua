@@ -56,7 +56,7 @@ function SWEP:GetWorldPos()
 		local att = self.Owner:GetAttachment(index)
 
 		if istable(att) then
-			pos = att.Pos
+			pos = att.Pos + self.WMOffset
 			ang = att.Ang + Angle(-10, 0, -5)
 		end
 	end

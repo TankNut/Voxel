@@ -1,18 +1,14 @@
 return {
-	Mesh = "voxel/meshes/smg2.lua",
-	Offset = Vector(-1, -8, -7),
+	Mesh = "voxel/meshes/smg.lua",
+	Offset = Vector(-1, -6, -5),
 	Angle = Angle(180, -90, 0),
 	Attachments = {
 		Muzzle = {
-			Pos = Vector(11.5, 0, 4),
+			Pos = Vector(18.5, 0, 3),
 			Angle = Angle()
 		},
 		Aim = {
-			Pos = Vector(0.5, 0, 7),
-			Angle = Angle()
-		},
-		Aimpoint = {
-			Pos = Vector(0.5, 0, 7),
+			Pos = Vector(0.5, 0, 6),
 			Angle = Angle()
 		}
 	}

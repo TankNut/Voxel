@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 function SWEP:GetSpread()
-	if self:AimingDownSights() then
+	if self.Owner:IsNPC() or self:AimingDownSights() then
 		return self.Spread
 	end
 

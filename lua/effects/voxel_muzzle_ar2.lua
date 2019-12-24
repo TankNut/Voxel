@@ -193,6 +193,10 @@ end
 function EFFECT:Think()
 	local live = false
 
+	if not IsValid(self.Ent) then
+		return false
+	end
+
 	for _, v in pairs({self.EmitterVM, self.EmitterWM}) do
 		if v and v:IsValid() then
 			if v:GetNumActiveParticles() == 0 then

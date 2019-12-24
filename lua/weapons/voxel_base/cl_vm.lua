@@ -17,6 +17,10 @@ end
 function SWEP:GetBaseVMPos()
 	local roll = self:GetRoll()
 
+	if self:IsReloading() then
+		return self.ReloadLower.Pos, self.ReloadLower.Ang + Angle(0, 0, roll)
+	end
+
 	if self:ShouldLower() then
 		return self.VMLower.Pos, self.VMLower.Ang + Angle(0, 0, roll)
 	end
