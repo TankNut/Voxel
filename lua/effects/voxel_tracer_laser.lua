@@ -37,17 +37,15 @@ function EFFECT:Init(data)
 end
 
 function EFFECT:GetStartPos(ent)
-	local offset = ent.VMOffset
-
 	if ent:IsCarriedByLocalPlayer() and not LocalPlayer():ShouldDrawLocalPlayer() then
 		local pos, ang = ent:GetVMPos()
-		local pos1 = voxel.GetPos(ent.Model, pos, ang, offset.Scale, "Muzzle")
+		local pos1 = ent:GetMuzzlePos(pos, ang)
 
 		return translatefov(ent, pos1)
 	else
 		local pos, ang = ent:GetWorldPos()
 
-		return voxel.GetPos(ent.Model, pos, ang, offset.Scale, "Muzzle")
+		return ent:GetMuzzlePos(pos, ang)
 	end
 end
 

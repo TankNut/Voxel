@@ -1,7 +1,6 @@
 AddCSLuaFile()
 
 SWEP.DrawWeaponInfoBox 		= false
-SWEP.DrawAmmo 				= true
 
 SWEP.PrintName 				= "SMG"
 
@@ -48,15 +47,7 @@ SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
 
 SWEP.ReloadTime 			= 2.5
 
-SWEP.Attachments 			= {
-	{
-		Model = "smg",
-		Pos = Vector(0, 2, 0)
-	}, {
-		Model = "smg",
-		Pos = Vector(0, -2, 0)
-	}
-}
+SWEP.Attachments 			= {}
 
 SWEP.VMOffset = {
 	Pos = Vector(12, -6, -8),
@@ -77,14 +68,15 @@ SWEP.ReloadLower = {
 
 AddCSLuaFile("cl_draw.lua")
 AddCSLuaFile("cl_hud.lua")
-AddCSLuaFile("cl_vm.lua")
+AddCSLuaFile("cl_model.lua")
 
 if CLIENT then
 	include("cl_draw.lua")
 	include("cl_hud.lua")
-	include("cl_vm.lua")
+	include("cl_model.lua")
 end
 
+include("sh_helpers.lua")
 include("sh_recoil.lua")
 
 include("sv_npc.lua")
@@ -221,14 +213,6 @@ end
 function SWEP:SecondaryAttack()
 end
 
-function SWEP:GetReserveAmmo()
-	return self.Owner:GetAmmoCount(self:GetPrimaryAmmoType())
-end
-
-function SWEP:IsReloading()
-	return self:GetFinishReload() > CurTime()
-end
-
 function SWEP:CanReload()
 	if self:GetFinishReload() > CurTime() then
 		return false
@@ -256,21 +240,6 @@ function SWEP:Reload()
 	self:SetFinishReload(CurTime() + self.ReloadTime)
 end
 
-function SWEP:HandleReload()
-	local finish = self:GetFinishReload()
-
-	if finish != 0 and finish <= CurTime() then
-		self:SetFinishReload(0)
-
-		local clip = self:Clip1()
-		local ammo = math.min(self.Primary.ClipSize - clip, self:GetReserveAmmo())
-
-		self:SetClip1(clip + ammo)
-
-		self.Owner:RemoveAmmo(ammo, self:GetPrimaryAmmoType())
-	end
-end
-
 function SWEP:Think()
 	local delta = CurTime() - self.LastThink
 
@@ -292,59 +261,30 @@ function SWEP:Think()
 		self:SetFireDuration(-1)
 	end
 
-	self:HandleReload()
+	self:ReloadThink()
 
 	self.LastThink = CurTime()
 end
 
-function SWEP:AimingDownSights()
-	local ply = self.Owner
+function SWEP:ReloadThink()
+	local finish = self:GetFinishReload()
 
-	if self:ShouldLower() then
-		return false
+	if finish != 0 and finish <= CurTime() then
+		self:SetFinishReload(0)
+
+		local clip = self:Clip1()
+		local ammo = math.min(self.Primary.ClipSize - clip, self:GetReserveAmmo())
+
+		self:SetClip1(clip + ammo)
+
+		self.Owner:RemoveAmmo(ammo, self:GetPrimaryAmmoType())
 	end
-
-	return ply:KeyDown(IN_ATTACK2)
 end
 
 function SWEP:StartFiring()
 end
 
 function SWEP:StopFiring()
-end
-
-function SWEP:GetAimAngle()
-	local ply = self.Owner
-
-	if ply:IsNPC() then
-		return ply:GetAimVector():Angle()
-	end
-
-	return ply:EyeAngles() + ply:GetViewPunchAngles()
-end
-
-function SWEP:ShouldLower()
-	local ply = self.Owner
-
-	if ply:IsPlayer() and self:IsSprinting() or not ply:OnGround() then
-		return true
-	end
-
-	return false
-end
-
-function SWEP:IsSprinting()
-	local ply = self.Owner
-	local vel = ply:GetVelocity():Length2D()
-	local walk = ply:GetWalkSpeed()
-
-	if not ply:OnGround() then
-		return false
-	end
-
-	local limit = ply:KeyDown(IN_SPEED) and (walk * 1.2) or (walk * 3)
-
-	return vel > limit
 end
 
 function SWEP:SetupMove(ply, mv)

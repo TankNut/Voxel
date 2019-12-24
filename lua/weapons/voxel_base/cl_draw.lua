@@ -2,6 +2,10 @@ local override = Material("engine/occlusionproxy")
 local aimpoint = Material("reticles/eotech_reddot")
 
 function SWEP:DrawAimpoint(pos, ang, scale)
+	if halo.RenderedEntity() == self then
+		return
+	end
+
 	render.SetStencilEnable(true)
 		render.SetStencilWriteMask(255)
 		render.SetStencilTestMask(255)
@@ -26,20 +30,7 @@ function SWEP:DrawAimpoint(pos, ang, scale)
 	render.ClearStencil()
 end
 
-function SWEP:GetViewModelPosition()
-	return self:GetVMPos()
-end
-
-function SWEP:PreDrawViewModel()
-	render.ModelMaterialOverride(override)
-end
-
-function SWEP:PostDrawViewModel()
-	render.ModelMaterialOverride()
-
-	local pos, ang = self:GetVMPos()
-	local scale = self.VMOffset.Scale
-
+function SWEP:DrawVoxelModel(pos, ang, scale)
 	voxel.Draw(self.Model, pos, ang, scale)
 
 	if voxel.HasAttachment(self.Model, "Aimpoint") then
@@ -57,21 +48,24 @@ function SWEP:DrawAttachments(pos, ang, scale)
 	end
 end
 
-function SWEP:GetWorldPos()
-	local pos = self:GetPos()
-	local ang = self:GetAngles()
+function SWEP:GetMuzzlePos(pos, ang)
+	return voxel.GetPos(self.Model, pos, ang, self.VMOffset.Scale, "Muzzle")
+end
 
-	if IsValid(self.Owner) then
-		local index = self.Owner:LookupAttachment("anim_attachment_RH")
-		local att = self.Owner:GetAttachment(index)
+function SWEP:GetViewModelPosition()
+	return self:GetVMPos()
+end
 
-		if istable(att) then
-			pos = att.Pos + self.WMOffset
-			ang = att.Ang + Angle(-10, 0, -5)
-		end
-	end
+function SWEP:PreDrawViewModel()
+	render.ModelMaterialOverride(override)
+end
 
-	return pos, ang
+function SWEP:PostDrawViewModel()
+	render.ModelMaterialOverride()
+
+	local pos, ang = self:GetVMPos()
+
+	self:DrawVoxelModel(pos, ang, self.VMOffset.Scale)
 end
 
 function SWEP:DrawWorldModel()
@@ -81,7 +75,5 @@ function SWEP:DrawWorldModel()
 
 	local pos, ang = self:GetWorldPos()
 
-	voxel.Draw(self.Model, pos, ang, self.VMOffset.Scale)
-
-	self:DrawAttachments(pos, ang, self.VMOffset.Scale)
+	self:DrawVoxelModel(pos, ang, self.VMOffset.Scale)
 end

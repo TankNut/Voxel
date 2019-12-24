@@ -176,17 +176,15 @@ function EFFECT:IsDrawingVM()
 end
 
 function EFFECT:GetStartPos(ent)
-	local offset = ent.VMOffset
-
 	if self:IsDrawingVM() then
 		local pos, ang = ent:GetVMPos()
-		local pos1 = voxel.GetPos(ent.Model, pos, ang, offset.Scale, "Muzzle")
+		local pos1 = ent:GetMuzzlePos(pos, ang)
 
 		return translatefov(ent, pos1), ang
 	else
 		local pos, ang = ent:GetWorldPos()
 
-		return voxel.GetPos(ent.Model, pos, ang, offset.Scale, "Muzzle")
+		return ent:GetMuzzlePos(pos, ang)
 	end
 end
 

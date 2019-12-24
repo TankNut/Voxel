@@ -3,7 +3,6 @@ AddCSLuaFile()
 SWEP.Base 					= "voxel_base"
 
 SWEP.DrawWeaponInfoBox 		= false
-SWEP.DrawAmmo 				= true
 
 SWEP.PrintName 				= "Rifle"
 
