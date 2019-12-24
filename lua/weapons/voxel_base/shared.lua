@@ -128,6 +128,14 @@ function SWEP:Deploy()
 	end
 end
 
+function SWEP:Holster()
+	if self:IsReloading() then
+		return false
+	end
+
+	return true
+end
+
 function SWEP:CanAttack()
 	if self:ShouldLower() then
 		return false
