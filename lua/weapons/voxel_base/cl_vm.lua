@@ -9,7 +9,7 @@ end
 
 function SWEP:GetADSTarget(pos, ang)
 	local offset = self.VMOffset
-	local pos2, ang2 = voxel.GetAttachment(self.Model, pos or Vector(), ang or Angle(), 1, "Aim")
+	local pos2, ang2 = voxel.GetPos(self.Model, pos or Vector(), ang or Angle(), 1, "Aim")
 
 	return -offset.Pos - pos2 + Vector(self.AimDistance, 0, 0), ang2
 end
@@ -154,6 +154,9 @@ SWEP.StorePos = Vector()
 SWEP.StoreAng = Angle()
 
 SWEP.LastVMTime = 0
+
+SWEP.CachedVMPos = Vector()
+SWEP.CachedVMAng = Angle()
 
 function SWEP:GetVMPos()
 	local dt = CurTime() - self.LastVMTime

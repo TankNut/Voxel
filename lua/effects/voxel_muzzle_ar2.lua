@@ -180,13 +180,13 @@ function EFFECT:GetStartPos(ent)
 
 	if self:IsDrawingVM() then
 		local pos, ang = ent:GetVMPos()
-		local pos1 = voxel.GetAttachment(ent.Model, pos, ang, offset.Scale, "Muzzle")
+		local pos1 = voxel.GetPos(ent.Model, pos, ang, offset.Scale, "Muzzle")
 
 		return translatefov(ent, pos1), ang
 	else
 		local pos, ang = ent:GetWorldPos()
 
-		return voxel.GetAttachment(ent.Model, pos, ang, offset.Scale, "Muzzle")
+		return voxel.GetPos(ent.Model, pos, ang, offset.Scale, "Muzzle")
 	end
 end
 

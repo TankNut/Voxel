@@ -210,8 +210,6 @@ function GetConvexHull(index, scale)
 	}
 end
 
-local convar_fov = GetConVar("fov_desired")
-
 function HasAttachment(index, attachment)
 	local data = Models[index]
 
@@ -222,26 +220,27 @@ function HasAttachment(index, attachment)
 	return data.Attachments[attachment] and true or false
 end
 
-function GetAttachment(index, pos, ang, size, attachment, fov)
+function GetPos(index, pos, ang, size, attachment, pos2, ang2)
 	local data = Models[index]
 
 	if not data then
 		return
 	end
 
-	local attdata = data.Attachments[attachment]
+	local att = data.Attachments[attachment]
+	local origin
 
-	if not attdata then
-		return pos, ang
+	if att then
+		origin = {LocalToWorld(att.Pos * size, att.Ang, pos, ang)}
+	else
+		origin = {pos, ang}
 	end
 
-	local scale = 1
-
-	if fov then
-		scale = fov / convar_fov:GetFloat()
+	if not pos2 and not ang2 then
+		return unpack(origin)
 	end
 
-	return LocalToWorld(attdata.Pos * size * scale, attdata.Angle, pos, ang)
+	return LocalToWorld((pos2 or Vector()) * size, ang2 or Angle(), unpack(origin))
 end
 
 function Draw(index, pos, ang, size, dev, parent)

@@ -48,6 +48,16 @@ SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
 
 SWEP.ReloadTime 			= 2.5
 
+SWEP.Attachments 			= {
+	{
+		Model = "smg",
+		Pos = Vector(0, 2, 0)
+	}, {
+		Model = "smg",
+		Pos = Vector(0, -2, 0)
+	}
+}
+
 SWEP.VMOffset = {
 	Pos = Vector(12, -6, -8),
 	Scale = 1.2

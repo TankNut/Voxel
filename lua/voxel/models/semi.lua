@@ -5,15 +5,15 @@ return {
 	Attachments = {
 		Muzzle = {
 			Pos = Vector(27.5, 0, 3),
-			Angle = Angle()
+			Ang = Angle()
 		},
 		Aim = {
 			Pos = Vector(1.5, 0, 5),
-			Angle = Angle()
+			Ang = Angle()
 		},
 		Aimpoint = {
 			Pos = Vector(1.5, 0, 5),
-			Angle = Angle()
+			Ang = Angle()
 		}
 	}
 }

@@ -13,7 +13,7 @@ function SWEP:DrawAimpoint(pos, ang, scale)
 
 		render.SetStencilCompareFunction(STENCIL_ALWAYS)
 
-		local attpos, attang = voxel.GetAttachment(self.Model, pos, ang, scale, "Aimpoint")
+		local attpos, attang = voxel.GetPos(self.Model, pos, ang, scale, "Aimpoint")
 
 		render.SetColorMaterial()
 		render.DrawQuadEasy(attpos, -attang:Forward(), scale, scale, ColorAlpha(color_white, 0))
@@ -38,12 +38,22 @@ function SWEP:PostDrawViewModel()
 	render.ModelMaterialOverride()
 
 	local pos, ang = self:GetVMPos()
-	local offset = self.VMOffset
+	local scale = self.VMOffset.Scale
 
-	voxel.Draw(self.Model, pos, ang, offset.Scale)
+	voxel.Draw(self.Model, pos, ang, scale)
 
 	if voxel.HasAttachment(self.Model, "Aimpoint") then
-		self:DrawAimpoint(pos, ang, offset.Scale)
+		self:DrawAimpoint(pos, ang, scale)
+	end
+
+	self:DrawAttachments(pos, ang, scale)
+end
+
+function SWEP:DrawAttachments(pos, ang, scale)
+	for _, v in pairs(self.Attachments) do
+		local drawpos, drawang = voxel.GetPos(self.Model, pos, ang, scale, v.Attachment, v.Pos, v.Ang)
+
+		voxel.Draw(v.Model, drawpos, drawang, scale * (v.Scale or 1))
 	end
 end
 
@@ -72,4 +82,6 @@ function SWEP:DrawWorldModel()
 	local pos, ang = self:GetWorldPos()
 
 	voxel.Draw(self.Model, pos, ang, self.VMOffset.Scale)
+
+	self:DrawAttachments(pos, ang, self.VMOffset.Scale)
 end
