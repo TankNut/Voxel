@@ -54,7 +54,7 @@ SWEP.VMOffset = {
 	Scale = 1.2
 }
 
-SWEP.WMOffset = Vector(0, 0, 0)
+SWEP.WMOffset = Vector(0, 1, 0)
 
 SWEP.VMLower = {
 	Pos = Vector(0, 3, -1),
