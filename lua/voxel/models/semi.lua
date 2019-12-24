@@ -8,7 +8,11 @@ return {
 			Angle = Angle()
 		},
 		Aim = {
-			Pos = Vector(1.5, 0, 5.5),
+			Pos = Vector(1.5, 0, 5),
+			Angle = Angle()
+		},
+		Aimpoint = {
+			Pos = Vector(1.5, 0, 5),
 			Angle = Angle()
 		}
 	}

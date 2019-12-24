@@ -35,7 +35,7 @@ SWEP.Delay 					= 0.5
 SWEP.Recoil 				= Vector(0.0001, 0.05, 0)
 SWEP.RecoilMult 			= 3
 
-SWEP.AimDistance 			= 12
+SWEP.AimDistance 			= 10
 
 SWEP.FireSound 				= Sound("voxel/semishoot.wav")
 SWEP.ReloadSound 			= Sound("voxel/semireload.wav")
