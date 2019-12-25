@@ -5,12 +5,7 @@ function string.Filename(path)
 	return string.StripExtension(string.GetFileFromFilename(path))
 end
 
-for _, v in pairs(file.Find("voxel/models/*", "LUA")) do
-	AddCSLuaFile("models/" .. v)
-
-	local index = string.Filename(v)
-	local data = include("models/" .. v)
-
+function RegisterVoxel(index, data)
 	AddCSLuaFile(data.Mesh)
 
 	local f = file.Open(data.Mesh, "rb", "LUA")
@@ -19,6 +14,11 @@ for _, v in pairs(file.Find("voxel/models/*", "LUA")) do
 	f:Close()
 
 	voxel.Load(index, size, grid, data.Offset, data.Angle, data.Attachments)
+end
+
+for _, v in pairs(file.Find("voxel/models/*", "LUA")) do
+	AddCSLuaFile("models/" .. v)
+	include("models/" .. v)
 end
 
 hook.Add("SetupMove", "voxel", function(ply, mv)

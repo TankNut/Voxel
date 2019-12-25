@@ -1,4 +1,4 @@
-return {
+RegisterVoxel("smg", {
 	Mesh = "voxel/meshes/smg.lua",
 	Offset = Vector(-1, -6, -5),
 	Angle = Angle(180, -90, 0),
@@ -12,4 +12,4 @@ return {
 			Ang = Angle()
 		}
 	}
-}
+})
