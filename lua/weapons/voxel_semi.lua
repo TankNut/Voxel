@@ -2,8 +2,6 @@ AddCSLuaFile()
 
 SWEP.Base 					= "voxel_base"
 
-SWEP.DrawWeaponInfoBox 		= false
-
 SWEP.PrintName 				= "Rifle"
 
 SWEP.Category 				= "Ace of Spades"
@@ -13,8 +11,6 @@ SWEP.Slot 					= 3
 
 SWEP.AdminOnly 				= false
 SWEP.Spawnable 				= true
-
-SWEP.DrawCrosshair 			= true
 
 SWEP.Primary.ClipSize 		= 10
 SWEP.Primary.DefaultClip 	= 50

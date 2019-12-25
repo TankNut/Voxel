@@ -2,24 +2,19 @@ AddCSLuaFile()
 
 SWEP.DrawWeaponInfoBox 		= false
 
-SWEP.PrintName 				= "SMG"
-
-SWEP.Category 				= "Ace of Spades"
 SWEP.Author 				= "TankNut"
 
 SWEP.Slot 					= 2
 
 SWEP.AdminOnly 				= false
-SWEP.Spawnable 				= true
+SWEP.Spawnable 				= false
 
 SWEP.ViewModel 				= Model("models/weapons/c_pistol.mdl")
 SWEP.WorldModel 			= Model("models/weapons/w_smg1.mdl")
 
-SWEP.DrawCrosshair 			= true
-
-SWEP.Primary.ClipSize 		= 30
-SWEP.Primary.DefaultClip 	= 120
-SWEP.Primary.Ammo 			= "SMG1"
+SWEP.Primary.ClipSize 		= -1
+SWEP.Primary.DefaultClip 	= -1
+SWEP.Primary.Ammo 			= ""
 SWEP.Primary.Automatic 		= true
 
 SWEP.Secondary.ClipSize 	= -1
@@ -47,8 +42,6 @@ SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
 
 SWEP.ReloadTime 			= 2.5
 
-SWEP.Attachments 			= {}
-
 SWEP.VMOffset = {
 	Pos = Vector(12, -6, -8),
 	Scale = 1.2
@@ -65,6 +58,8 @@ SWEP.ReloadLower = {
 	Pos = Vector(0, 0, -1),
 	Ang = Angle(30, 0, 0)
 }
+
+SWEP.Attachments = {}
 
 AddCSLuaFile("cl_draw.lua")
 AddCSLuaFile("cl_hud.lua")
