@@ -1,10 +1,12 @@
 local override = Material("engine/occlusionproxy")
 local aimpoint = Material("reticles/eotech_reddot")
 
-function SWEP:DrawAimpoint(pos, ang, scale)
+function SWEP:DrawAimpoint(pos, ang)
 	if halo.RenderedEntity() == self then
 		return
 	end
+
+	local scale = self.ModelScale
 
 	render.SetStencilEnable(true)
 		render.SetStencilWriteMask(255)
@@ -30,26 +32,26 @@ function SWEP:DrawAimpoint(pos, ang, scale)
 	render.ClearStencil()
 end
 
-function SWEP:DrawVoxelModel(pos, ang, scale)
-	voxel.Draw(self.Model, pos, ang, scale)
+function SWEP:DrawVoxelModel(pos, ang)
+	voxel.Draw(self.Model, pos, ang, self.ModelScale)
 
 	if voxel.HasAttachment(self.Model, "Aimpoint") then
-		self:DrawAimpoint(pos, ang, scale)
+		self:DrawAimpoint(pos, ang)
 	end
 
-	self:DrawAttachments(pos, ang, scale)
+	self:DrawAttachments(pos, ang)
 end
 
-function SWEP:DrawAttachments(pos, ang, scale)
+function SWEP:DrawAttachments(pos, ang)
 	for _, v in pairs(self.Attachments) do
-		local drawpos, drawang = voxel.GetPos(self.Model, pos, ang, scale, v.Attachment, v.Pos, v.Ang)
+		local drawpos, drawang = voxel.GetPos(self.Model, pos, ang, self.ModelScale, v.Attachment, v.Pos, v.Ang)
 
-		voxel.Draw(v.Model, drawpos, drawang, scale * (v.Scale or 1))
+		voxel.Draw(v.Model, drawpos, drawang, self.ModelScale * (v.Scale or 1))
 	end
 end
 
 function SWEP:GetMuzzlePos(pos, ang)
-	return voxel.GetPos(self.Model, pos, ang, self.VMOffset.Scale, "Muzzle")
+	return voxel.GetPos(self.Model, pos, ang, self.ModelScale, "Muzzle")
 end
 
 function SWEP:GetViewModelPosition()
@@ -65,7 +67,7 @@ function SWEP:PostDrawViewModel()
 
 	local pos, ang = self:GetVMPos()
 
-	self:DrawVoxelModel(pos, ang, self.VMOffset.Scale)
+	self:DrawVoxelModel(pos, ang)
 end
 
 function SWEP:DrawWorldModel()
@@ -75,5 +77,5 @@ function SWEP:DrawWorldModel()
 
 	local pos, ang = self:GetWorldPos()
 
-	self:DrawVoxelModel(pos, ang, self.VMOffset.Scale)
+	self:DrawVoxelModel(pos, ang)
 end

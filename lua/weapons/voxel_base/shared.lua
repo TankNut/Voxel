@@ -23,6 +23,7 @@ SWEP.Secondary.Ammo 		= ""
 SWEP.Secondary.Automatic 	= false
 
 SWEP.Model 					= "smg"
+SWEP.ModelScale 			= 1
 
 SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
@@ -44,7 +45,6 @@ SWEP.ReloadTime 			= 2.5
 
 SWEP.VMOffset = {
 	Pos = Vector(12, -6, -8),
-	Scale = 1.2
 }
 
 SWEP.WMOffset = Vector(0, 1, 0)
@@ -77,7 +77,7 @@ include("sh_recoil.lua")
 include("sv_npc.lua")
 
 function SWEP:Initialize()
-	local mins, maxs = voxel.GetHull(self.Model, self.VMOffset.Scale)
+	local mins, maxs = voxel.GetHull(self.Model, self.ModelScale)
 
 	self.PhysCollide = CreatePhysCollideBox(mins, maxs)
 	self:SetCollisionBounds(mins, maxs)

@@ -18,6 +18,7 @@ SWEP.Primary.Ammo 			= "357"
 SWEP.Primary.Automatic 		= true
 
 SWEP.Model 					= "semi"
+SWEP.ModelScale 			= 1
 
 SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
@@ -38,6 +39,5 @@ SWEP.ReloadSound 			= Sound("voxel/semireload.wav")
 SWEP.ReloadTime 			= 2.5
 
 SWEP.VMOffset = {
-	Pos = Vector(12, -6, -8),
-	Scale = 1.2
+	Pos = Vector(12, -6, -8)
 }

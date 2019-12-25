@@ -18,6 +18,7 @@ SWEP.Primary.Ammo 			= "SMG1"
 SWEP.Primary.Automatic 		= true
 
 SWEP.Model 					= "smg"
+SWEP.ModelScale 			= 1
 
 SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
@@ -38,6 +39,5 @@ SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
 SWEP.ReloadTime 			= 2.5
 
 SWEP.VMOffset = {
-	Pos = Vector(12, -6, -8),
-	Scale = 1.2
+	Pos = Vector(12, -6, -8)
 }

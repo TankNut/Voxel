@@ -8,10 +8,9 @@ function SWEP:GetRoll()
 end
 
 function SWEP:GetADSTarget(pos, ang)
-	local offset = self.VMOffset
 	local pos2, ang2 = voxel.GetPos(self.Model, pos or Vector(), ang or Angle(), 1, "Aim")
 
-	return -offset.Pos - pos2 + Vector(self.AimDistance, 0, 0), ang2
+	return -self.VMOffset.Pos - pos2 + Vector(self.AimDistance, 0, 0), ang2
 end
 
 function SWEP:GetBaseVMPos()
@@ -35,7 +34,7 @@ end
 function SWEP:GetADSFactor()
 	local target = self:GetADSTarget()
 
-	return 1 - (self.StorePos:Distance(target) / Vector():Distance(target))
+	return 1 - (self.StorePos:Distance(target) / target:Length())
 end
 
 SWEP.OldEye = Angle()
@@ -182,9 +181,7 @@ function SWEP:GetVMPos()
 
 	self.LastVMTime = CurTime()
 
-	local offset = self.VMOffset
-
-	return LocalToWorld((self.StorePos * offset.Scale) + (offset.Pos * offset.Scale), self.StoreAng, EyePos(), EyeAngles())
+	return LocalToWorld((self.StorePos * self.ModelScale) + (self.VMOffset.Pos * self.ModelScale), self.StoreAng, EyePos(), EyeAngles())
 end
 
 function SWEP:GetWorldPos()
