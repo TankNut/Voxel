@@ -51,3 +51,11 @@ function SWEP:IsSprinting()
 
 	return vel > limit
 end
+
+if CLIENT then
+	function SWEP:GetADSFactor()
+		local target = self:GetADSTarget()
+
+		return 1 - (self.StorePos:Distance(target) / target:Length())
+	end
+end

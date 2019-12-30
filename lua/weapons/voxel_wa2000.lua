@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 SWEP.Base 					= "voxel_base"
 
-SWEP.PrintName 				= "Rifle"
+SWEP.PrintName 				= "WA 2000"
 
 SWEP.Category 				= "Ace of Spades"
 SWEP.Author 				= "TankNut"
@@ -12,14 +12,14 @@ SWEP.Slot 					= 3
 SWEP.AdminOnly 				= false
 SWEP.Spawnable 				= true
 
-SWEP.DrawCrosshair 			= true
+SWEP.DrawCrosshair 			= false
 
-SWEP.Primary.ClipSize 		= 10
-SWEP.Primary.DefaultClip 	= 50
+SWEP.Primary.ClipSize 		= 6
+SWEP.Primary.DefaultClip 	= 30
 SWEP.Primary.Ammo 			= "357"
 SWEP.Primary.Automatic 		= true
 
-SWEP.Model 					= "semi"
+SWEP.Model 					= "wa2000"
 SWEP.ModelScale 			= 1
 
 SWEP.HoldType 				= "ar2"
@@ -27,13 +27,16 @@ SWEP.HoldTypeLower 			= "passive"
 
 SWEP.Damage 				= 49
 
-SWEP.Spread 				= 0.006
+SWEP.Spread 				= 0.002
 
 SWEP.Delay 					= 0.5
 SWEP.Recoil 				= Vector(0.0001, 0.05, 0)
 SWEP.RecoilMult 			= 3
 
-SWEP.AimDistance 			= 10
+SWEP.AimDistance 			= 2
+
+SWEP.UseScope 				= true
+SWEP.Zoom 					= 10
 
 SWEP.FireSound 				= Sound("voxel/semishoot.wav")
 SWEP.ReloadSound 			= Sound("voxel/semireload.wav")
@@ -41,5 +44,5 @@ SWEP.ReloadSound 			= Sound("voxel/semireload.wav")
 SWEP.ReloadTime 			= 2.5
 
 SWEP.VMOffset = {
-	Pos = Vector(12, -6, -8)
+	Pos = Vector(10, -5, -10)
 }

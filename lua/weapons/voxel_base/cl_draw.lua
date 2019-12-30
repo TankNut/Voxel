@@ -67,7 +67,9 @@ function SWEP:PostDrawViewModel()
 
 	local pos, ang = self:GetVMPos()
 
-	self:DrawVoxelModel(pos, ang)
+	if not self.Scoped then
+		self:DrawVoxelModel(pos, ang)
+	end
 end
 
 function SWEP:DrawWorldModel()

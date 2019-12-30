@@ -9,6 +9,8 @@ SWEP.Slot 					= 2
 SWEP.AdminOnly 				= false
 SWEP.Spawnable 				= false
 
+SWEP.DrawCrosshair 			= true
+
 SWEP.ViewModel 				= Model("models/weapons/c_pistol.mdl")
 SWEP.WorldModel 			= Model("models/weapons/w_smg1.mdl")
 
@@ -37,6 +39,9 @@ SWEP.Recoil 				= Vector(0.00005, 0.0125, 0)
 SWEP.RecoilMult 			= 2
 
 SWEP.AimDistance 			= 10
+
+SWEP.UseScope 				= false
+SWEP.Zoom 					= 2
 
 SWEP.FireSound 				= Sound("voxel/smgshoot.wav")
 SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
@@ -258,6 +263,10 @@ function SWEP:Think()
 
 	self:ReloadThink()
 
+	if CLIENT then
+		self:ScopeThink()
+	end
+
 	self.LastThink = CurTime()
 end
 
@@ -282,11 +291,42 @@ end
 function SWEP:StopFiring()
 end
 
+if CLIENT then
+	local fov = GetConVar("fov_desired")
+	local ratio = GetConVar("zoom_sensitivity_ratio")
+
+	function SWEP:AdjustMouseSensitivity()
+		return (LocalPlayer():GetFOV() / fov:GetFloat()) * ratio:GetFloat()
+	end
+
+	function SWEP:ScopeThink()
+		if not self.UseScope then
+			return
+		end
+
+		if not self:AimingDownSights() or self:IsReloading() then
+			self.Scoped = false
+		elseif not self.Scoped and self:GetADSFactor() > 0.9 then
+			self.Scoped = true
+		end
+	end
+end
+
+function SWEP:TranslateFOV(fov)
+	if not self.UseScope then
+		return fov
+	end
+
+	if (CLIENT and self.Scoped) or (SERVER and self:AimingDownSights()) then
+		return fov / self.Zoom
+	end
+end
+
 function SWEP:SetupMove(ply, mv)
 	if self:IsReloading() then
 		mv:SetMaxClientSpeed(ply:GetWalkSpeed())
 	elseif self:AimingDownSights() then
-		mv:SetMaxClientSpeed(ply:GetWalkSpeed() * 0.7)
+		mv:SetMaxClientSpeed(ply:GetWalkSpeed() * 0.6)
 	end
 end
 

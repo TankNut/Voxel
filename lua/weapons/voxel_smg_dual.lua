@@ -12,6 +12,8 @@ SWEP.Slot 					= 2
 SWEP.AdminOnly 				= false
 SWEP.Spawnable 				= true
 
+SWEP.DrawCrosshair 			= true
+
 SWEP.Primary.ClipSize 		= 60
 SWEP.Primary.DefaultClip 	= 240
 SWEP.Primary.Ammo 			= "SMG1"

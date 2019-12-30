@@ -51,3 +51,28 @@ function SWEP:DoDrawCrosshair(x, y)
 
 	return true
 end
+
+function SWEP:DrawHUDBackground()
+	if self.Scoped then
+		local w = ScrW()
+		local h = ScrH()
+
+		surface.SetDrawColor(10, 10, 10, 255)
+
+		local ratio = 4 / 3
+		local width = ratio * h
+
+		local x = (w * 0.5) - (width * 0.5)
+
+		surface.SetDrawColor(3, 3, 3, 255)
+
+		surface.DrawRect(0, 0, x, h)
+		surface.DrawRect(x + width, 0, x, h)
+
+		surface.DrawLine(w * 0.5, 0, w * 0.5, h)
+		surface.DrawLine(0, h * 0.5, w, h * 0.5)
+
+		surface.SetTexture(surface.GetTextureID("gmod/scope"))
+		surface.DrawTexturedRect((w * 0.5) - (width * 0.5), 0, width, h)
+	end
+end

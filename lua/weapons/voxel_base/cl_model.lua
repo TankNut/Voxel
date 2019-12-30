@@ -31,12 +31,6 @@ function SWEP:GetBaseVMPos()
 	return Vector(), Angle(0, 0, roll)
 end
 
-function SWEP:GetADSFactor()
-	local target = self:GetADSTarget()
-
-	return 1 - (self.StorePos:Distance(target) / target:Length())
-end
-
 SWEP.OldEye = Angle()
 SWEP.EyeDelta = Angle()
 
@@ -174,10 +168,12 @@ function SWEP:GetVMPos()
 	self.StorePos = LerpVector(math.Clamp(dt * 10, 0, 1), self.StorePos, pos)
 	self.StoreAng = LerpAngle(math.Clamp(dt * 10, 0, 1), self.StoreAng, ang)
 
-	local sway = self:GetVMSway(dt)
+	if not self.Scoped then
+		local sway = self:GetVMSway(dt)
 
-	self.StorePos = self.StorePos + Vector(0, -sway.y * 0.05, sway.p * 0.05)
-	self.StoreAng = self.StoreAng + Angle(sway.p * 0.05, sway.y * 0.05, 0)
+		self.StorePos = self.StorePos + Vector(0, -sway.y * 0.05, sway.p * 0.05)
+		self.StoreAng = self.StoreAng + Angle(sway.p * 0.05, sway.y * 0.05, 0)
+	end
 
 	self.LastVMTime = CurTime()
 
