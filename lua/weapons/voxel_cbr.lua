@@ -28,7 +28,7 @@ SWEP.TracerEffect 			= "voxel_tracer_beam"
 SWEP.HoldType 				= "smg"
 SWEP.HoldTypeLower 			= "passive"
 
-SWEP.Damage 				= 15
+SWEP.Damage 				= 2
 
 SWEP.Spread 				= 0.005
 
