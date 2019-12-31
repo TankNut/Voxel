@@ -10,7 +10,7 @@ ENT.Author 					= "TankNut"
 ENT.Spawnable 				= true
 ENT.AdminSpawnable			= true
 
-ENT.Model 					= "semi"
+ENT.Model 					= "cbr"
 ENT.Scale 					= 1
 
 function ENT:Initialize()

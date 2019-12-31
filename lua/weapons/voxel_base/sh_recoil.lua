@@ -40,8 +40,8 @@ function SWEP:DoRecoil()
 	local horz, vert = self:GetRecoilModifier()
 	local ang = ply:EyeAngles()
 
-	local p = math.min(recoil.y, math.max(0, limit)) * vert
-	local y = recoil.x * math.Rand(-255, 255) * horz
+	local p = math.min(recoil.x, math.max(0, limit)) * vert
+	local y = recoil.y * math.Rand(-1, 1) * horz
 
 	dir = dir + (ang:Up() * p)
 	dir = dir + (ang:Right() * y)

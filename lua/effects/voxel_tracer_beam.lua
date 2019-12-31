@@ -1,5 +1,4 @@
-EFFECT.Mat = Material("trails/laser")
-EFFECT.Speed = 5000
+EFFECT.Mat = Material("models/effects/splodearc_sheet")
 
 local function translatefov(ent, pos, inverse)
 	local worldx = math.tan(LocalPlayer():GetFOV() * (math.pi / 360))
@@ -30,10 +29,33 @@ function EFFECT:Init(data)
 	self.Start = self:GetStartPos(self.Ent)
 	self.End = data:GetOrigin()
 
+	local normal = (self.Start - self.End):Angle():Forward()
+
 	self:SetRenderBoundsWS(self.Start, self.End)
 
-	self.Color = Color(150, 100, 255)
-	self.Alpha = 150
+	self.DieTime = CurTime() + 0.1
+
+	self.Color = Color(97, 245, 194)
+
+	local dynlight = DynamicLight(0)
+	dynlight.Pos = self.End + normal * 10
+	dynlight.Size = 100
+	dynlight.Brightness = 1
+	dynlight.Decay = 3000
+	dynlight.R = self.Color.r
+	dynlight.G = self.Color.g
+	dynlight.B = self.Color.b
+	dynlight.DieTime = CurTime() + 0.1
+
+	dynlight = DynamicLight(0)
+	dynlight.Pos = self.Start
+	dynlight.Size = 100
+	dynlight.Brightness = 1
+	dynlight.Decay = 3000
+	dynlight.R = self.Color.r
+	dynlight.G = self.Color.g
+	dynlight.B = self.Color.b
+	dynlight.DieTime = CurTime() + 0.1
 end
 
 function EFFECT:GetStartPos(ent)
@@ -50,9 +72,7 @@ function EFFECT:GetStartPos(ent)
 end
 
 function EFFECT:Think()
-	self.Alpha = self.Alpha - FrameTime() * 2048
-
-	if self.Alpha < 0 then
+	if not self.DieTime or CurTime() > self.DieTime then
 		return false
 	end
 
@@ -60,15 +80,8 @@ function EFFECT:Think()
 end
 
 function EFFECT:Render()
-	if self.Alpha < 1 then
-		return
-	end
-
-	local length = (self.Start - self.End):Length()
-	local texcoord = math.Rand(0, 1)
-
 	local start = self:GetStartPos(self.Ent)
 
 	render.SetMaterial(self.Mat)
-	render.DrawBeam(start, self.End, 8, texcoord, texcoord + length / 128, self.Color)
+	render.DrawBeam(start, self.End, 10, 0, 0, self.Color)
 end

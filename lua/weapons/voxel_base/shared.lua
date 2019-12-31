@@ -27,6 +27,9 @@ SWEP.Secondary.Automatic 	= false
 SWEP.Model 					= "smg"
 SWEP.ModelScale 			= 1
 
+SWEP.MuzzleEffect 			= false
+SWEP.TracerEffect 			= "voxel_tracer_ar2"
+
 SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
 
@@ -43,7 +46,7 @@ SWEP.AimDistance 			= 10
 SWEP.UseScope 				= false
 SWEP.Zoom 					= 2
 
-SWEP.FireSound 				= Sound("voxel/smgshoot.wav")
+SWEP.FireSound 				= false
 SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
 
 SWEP.ReloadTime 			= 2.5
@@ -155,7 +158,7 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	if self:Clip1() <= 0 then
+	if self.Primary.ClipSize > 0 and self:Clip1() <= 0 then
 		self:EmitSound("voxel/empty.wav")
 		self:SetNextPrimaryFire(CurTime() + self.Delay * 2)
 
@@ -173,14 +176,14 @@ function SWEP:PrimaryAttack()
 		math.randomseed(ply:GetCurrentCommand():CommandNumber())
 	end
 
-	if IsFirstTimePredicted() then
+	if IsFirstTimePredicted() and self.MuzzleEffect then
 		local ed = EffectData()
 
 		ed:SetEntity(self)
-		ed:SetScale(0.6)
+		ed:SetScale(1)
 		ed:SetOrigin(self:GetPos())
 
-		util.Effect("voxel_muzzle_ar2", ed)
+		util.Effect(self.MuzzleEffect, ed)
 	end
 
 	ply:SetAnimation(PLAYER_ATTACK1)
@@ -195,7 +198,7 @@ function SWEP:PrimaryAttack()
 		Dir = (self:GetAimAngle() + aimcone):Forward(),
 		Attacker = self.Owner,
 		Spread = Vector(0, 0, 0),
-		TracerName = "voxel_tracer_ar2",
+		TracerName = self.TracerEffect,
 		Tracer = 1,
 		Damage = self.Damage
 	})
@@ -206,7 +209,10 @@ function SWEP:PrimaryAttack()
 		self:DoRecoil()
 	end
 
-	self:EmitSound(self.FireSound)
+	if self.FireSound then
+		self:EmitSound(self.FireSound)
+	end
+
 	self:SetNextPrimaryFire(CurTime() + self.Delay)
 end
 
@@ -249,16 +255,18 @@ function SWEP:Think()
 		self:SetHoldType(self.HoldType)
 	end
 
-	local duration = self:GetFireDuration()
+	if SERVER then
+		local duration = self:GetFireDuration()
 
-	if duration != -1 and self.Owner:KeyDown(IN_ATTACK) and self:CanAttack() then
-		self:SetFireDuration(duration + delta)
-	else
-		if duration != -1 then
-			self:StopFiring()
+		if duration != -1 and self.Owner:KeyDown(IN_ATTACK) and self:CanAttack() then
+			self:SetFireDuration(duration + delta)
+		else
+			if duration != -1 then
+				self:StopFiring()
+			end
+
+			self:SetFireDuration(-1)
 		end
-
-		self:SetFireDuration(-1)
 	end
 
 	self:ReloadThink()

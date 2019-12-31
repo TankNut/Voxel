@@ -22,6 +22,9 @@ SWEP.Primary.Automatic 		= true
 SWEP.Model 					= "smg"
 SWEP.ModelScale 			= 1
 
+SWEP.MuzzleEffect 			= "voxel_muzzle_smg"
+SWEP.TracerEffect 			= "voxel_tracer_smg"
+
 SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
 
@@ -30,7 +33,7 @@ SWEP.Damage 				= 29
 SWEP.Spread 				= 0.012
 
 SWEP.Delay 					= 0.1
-SWEP.Recoil 				= Vector(0.00005, 0.0125, 0)
+SWEP.Recoil 				= Vector(0.0125, 0.01275, 0)
 SWEP.RecoilMult 			= 2
 
 SWEP.AimDistance 			= 10
