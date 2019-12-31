@@ -1,5 +1,13 @@
 AddCSLuaFile()
 
+function SWEP:TrySound(snd)
+	if not snd then
+		return
+	end
+
+	self:EmitSound(snd)
+end
+
 function SWEP:GetReserveAmmo()
 	return self.Owner:GetAmmoCount(self:GetPrimaryAmmoType())
 end

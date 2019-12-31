@@ -56,6 +56,6 @@ function SWEP:SetVMRecoil()
 	if game.SinglePlayer() and SERVER then
 		self:CallOnClient("SetVMRecoil")
 	elseif CLIENT then
-		self.RecoilFactor = 1
+		self.RecoilFactor = self.ConstantRecoil and 0.5 or 1
 	end
 end

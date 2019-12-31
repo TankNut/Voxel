@@ -34,12 +34,14 @@ SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
 
 SWEP.Damage 				= 29
+SWEP.DamageType 			= DMG_BULLET
 
 SWEP.Spread 				= 0.012
 
 SWEP.Delay 					= 0.1
 SWEP.Recoil 				= Vector(0.00005, 0.0125, 0)
 SWEP.RecoilMult 			= 2
+SWEP.ConstantRecoil 		= false
 
 SWEP.AimDistance 			= 10
 
@@ -47,7 +49,9 @@ SWEP.UseScope 				= false
 SWEP.Zoom 					= 2
 
 SWEP.FireSound 				= false
-SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
+SWEP.ReloadSound 			= false
+
+SWEP.FireAnimation 			= true
 
 SWEP.ReloadTime 			= 2.5
 
@@ -55,7 +59,7 @@ SWEP.VMOffset = {
 	Pos = Vector(12, -6, -8),
 }
 
-SWEP.WMOffset = Vector(0, 1, 0)
+SWEP.WMOffset = Vector(0, -1, 0)
 
 SWEP.VMLower = {
 	Pos = Vector(0, 3, -1),
@@ -103,6 +107,11 @@ function SWEP:Initialize()
 
 	if CLIENT then
 		self:SetRenderBounds(mins, maxs)
+
+		self.StorePos = self.VMLower.Pos
+		self.StoreAng = self.VMLower.Ang
+
+		self.LastVMTime = CurTime()
 	end
 
 	self:DrawShadow(false)
@@ -186,7 +195,9 @@ function SWEP:PrimaryAttack()
 		util.Effect(self.MuzzleEffect, ed)
 	end
 
-	ply:SetAnimation(PLAYER_ATTACK1)
+	if self.FireAnimation then
+		ply:SetAnimation(PLAYER_ATTACK1)
+	end
 
 	local cone = self:GetSpread()
 	local aimcone = Angle(math.Rand(-cone, cone) * 25, 0, 0)
@@ -200,7 +211,10 @@ function SWEP:PrimaryAttack()
 		Spread = Vector(0, 0, 0),
 		TracerName = self.TracerEffect,
 		Tracer = 1,
-		Damage = self.Damage
+		Damage = self.Damage,
+		Callback = function(attacker, tr, dmg)
+			dmg:SetDamageType(self.DamageType)
+		end
 	})
 
 	self:TakePrimaryAmmo(1)
@@ -209,9 +223,7 @@ function SWEP:PrimaryAttack()
 		self:DoRecoil()
 	end
 
-	if self.FireSound then
-		self:EmitSound(self.FireSound)
-	end
+	self:TrySound(self.FireSound)
 
 	self:SetNextPrimaryFire(CurTime() + self.Delay)
 end
@@ -242,7 +254,7 @@ function SWEP:Reload()
 
 	self.Owner:SetAnimation(PLAYER_RELOAD)
 
-	self:EmitSound(self.ReloadSound)
+	self:TrySound(self.ReloadSound)
 	self:SetFinishReload(CurTime() + self.ReloadTime)
 end
 

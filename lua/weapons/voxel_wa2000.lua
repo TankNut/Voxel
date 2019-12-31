@@ -29,6 +29,7 @@ SWEP.HoldType 				= "ar2"
 SWEP.HoldTypeLower 			= "passive"
 
 SWEP.Damage 				= 49
+SWEP.DamageType 			= DMG_BULLET
 
 SWEP.Spread 				= 0.002
 

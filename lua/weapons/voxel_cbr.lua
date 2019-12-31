@@ -29,14 +29,18 @@ SWEP.HoldType 				= "smg"
 SWEP.HoldTypeLower 			= "passive"
 
 SWEP.Damage 				= 2
+SWEP.DamageType 			= DMG_ENERGYBEAM
 
 SWEP.Spread 				= 0.005
 
 SWEP.Delay 					= 0.02
 SWEP.Recoil 				= Vector(0.005, 0.003, 0)
 SWEP.RecoilMult 			= 3
+SWEP.ConstantRecoil 		= true
 
 SWEP.AimDistance 			= 10
+
+SWEP.FireAnimation 			= false
 
 SWEP.VMOffset = {
 	Pos = Vector(12, -6, -8)
