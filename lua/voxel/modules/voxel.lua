@@ -280,6 +280,10 @@ function DrawDebug(index, pos, ang, size, parent)
 		render.DrawLine(pos, pos + (ang:Right() * 5), Color(0, 255, 0), true)
 		render.DrawLine(pos, pos + (ang:Up() * 5), Color(0, 0, 255), true)
 
+		if not data.Attachments then
+			return
+		end
+
 		for k, v in pairs(data.Attachments) do
 			local pos2, ang2 = LocalToWorld(v.Pos * size, v.Ang, pos, ang)
 
