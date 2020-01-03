@@ -32,7 +32,7 @@ function SWEP:DrawAimpoint(pos, ang)
 	render.ClearStencil()
 end
 
-function SWEP:DrawVoxelModel(pos, ang)
+function SWEP:DrawVoxelModel(pos, ang, wm)
 	voxel.Draw(self.Model, pos, ang, self.ModelScale)
 
 	if voxel.HasAttachment(self.Model, "Aimpoint") then
@@ -79,5 +79,5 @@ function SWEP:DrawWorldModel()
 
 	local pos, ang = self:GetWorldPos()
 
-	self:DrawVoxelModel(pos, ang)
+	self:DrawVoxelModel(pos, ang, true)
 end

@@ -1,6 +1,10 @@
 AddCSLuaFile()
 
 function SWEP:GetSpread()
+	if not voxel.HasAttachment(self.Model, "Aim") then
+		return self.Spread
+	end
+
 	if self.Owner:IsNPC() or self:AimingDownSights() then
 		return self.Spread
 	end

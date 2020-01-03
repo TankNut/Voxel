@@ -1,0 +1,30 @@
+"VertexLitGeneric" {
+	"$baseTexture" "effects\voxel\plasma_beam"
+	"$translucent" 	"1"
+	"$nocull"		"1"
+	"$envmapmask" 	"effects\voxel\plasma_beam"
+	"$selfillum_envmapmask_alpha" 1
+	"Proxies" {
+		"AnimatedTexture"
+		{
+			"animatedtexturevar" "$bumpmap"
+			"animatedtextureframenumvar" "$bumpframe"
+			"animatedtextureframerate" 20
+		}
+
+		"TextureScroll" {
+			"LinearRamp" {
+				"rate" 4
+				"initialValue" 0.0
+				"resultVar" "$angle"
+			}
+
+			"texturescrollvar" "$baseTextureTransform"
+			"texturescrollrate" 1.1
+			"texturescrollangle" 90
+			"texturescrollvar" "$baseTextureTransform"
+			"texturescrollrate" -.00
+			"texturescrollangle" 90
+		}	
+	}
+}

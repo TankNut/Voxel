@@ -59,7 +59,10 @@ SWEP.VMOffset = {
 	Pos = Vector(12, -6, -8),
 }
 
-SWEP.WMOffset = Vector(0, -1, 0)
+SWEP.WMOffset = {
+	Pos = Vector(0, -1, 0),
+	Ang = Angle()
+}
 
 SWEP.VMLower = {
 	Pos = Vector(0, 3, -1),
@@ -72,6 +75,8 @@ SWEP.ReloadLower = {
 }
 
 SWEP.Attachments = {}
+
+SWEP.ActivityOverrides = {}
 
 AddCSLuaFile("cl_draw.lua")
 AddCSLuaFile("cl_hud.lua")
@@ -199,12 +204,25 @@ function SWEP:PrimaryAttack()
 		ply:SetAnimation(PLAYER_ATTACK1)
 	end
 
+	self:FireWeapon(ply)
+	self:TakePrimaryAmmo(1)
+
+	if ply:IsPlayer() then
+		self:DoRecoil()
+	end
+
+	self:TrySound(self.FireSound)
+
+	self:SetNextPrimaryFire(CurTime() + self.Delay)
+end
+
+function SWEP:FireWeapon(ply)
 	local cone = self:GetSpread()
 	local aimcone = Angle(math.Rand(-cone, cone) * 25, 0, 0)
 
 	aimcone:RotateAroundAxis(Vector(1, 0, 0), math.Rand(0, 360))
 
-	ply:FireBullets({
+	self:FireBullets({
 		Src = ply:GetShootPos(),
 		Dir = (self:GetAimAngle() + aimcone):Forward(),
 		Attacker = self.Owner,
@@ -216,16 +234,6 @@ function SWEP:PrimaryAttack()
 			dmg:SetDamageType(self.DamageType)
 		end
 	})
-
-	self:TakePrimaryAmmo(1)
-
-	if ply:IsPlayer() then
-		self:DoRecoil()
-	end
-
-	self:TrySound(self.FireSound)
-
-	self:SetNextPrimaryFire(CurTime() + self.Delay)
 end
 
 function SWEP:SecondaryAttack()
@@ -348,6 +356,23 @@ function SWEP:SetupMove(ply, mv)
 	elseif self:AimingDownSights() then
 		mv:SetMaxClientSpeed(ply:GetWalkSpeed() * 0.6)
 	end
+end
+
+function SWEP:TranslateActivity(act)
+	local ply = self.Owner
+
+	if ply:IsNPC() then
+		return self.ActivityTranslateAI[act] or -1
+	end
+
+	local holdtype = self:GetHoldType()
+	local overrides = self.ActivityOverrides[holdtype]
+
+	if overrides and overrides[act] then
+		return overrides[act]
+	end
+
+	return self.ActivityTranslate[act] or -1
 end
 
 function SWEP:TestCollision(start, delta, isbox, extends)

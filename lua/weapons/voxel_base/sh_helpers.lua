@@ -5,6 +5,10 @@ function SWEP:TrySound(snd)
 		return
 	end
 
+	if istable(snd) then
+		snd = table.Random(snd)
+	end
+
 	self:EmitSound(snd)
 end
 
@@ -24,6 +28,10 @@ end
 
 function SWEP:AimingDownSights()
 	local ply = self.Owner
+
+	if not voxel.HasAttachment(self.Model, "Aim") then
+		return false
+	end
 
 	if self:ShouldLower() then
 		return false
