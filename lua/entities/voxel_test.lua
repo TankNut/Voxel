@@ -10,20 +10,22 @@ ENT.Author 					= "TankNut"
 ENT.Spawnable 				= true
 ENT.AdminSpawnable			= true
 
-ENT.Model 					= "cbr"
+ENT.Model 					= false
 ENT.Scale 					= 1
 
 function ENT:Initialize()
-	local mins, maxs = voxel.GetHull(self.Model, self.Scale)
+	self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
 
-	self.PhysCollide = CreatePhysCollideBox(mins, maxs)
-	self:SetCollisionBounds(mins, maxs)
+	for k in SortedPairs(voxel.Models) do
+		self:SetVoxelModel(k)
+
+		break
+	end
+
+	self:SetupPhysics()
 
 	if SERVER then
-		self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
-
-		self:PhysicsInitBox(mins, maxs)
-		self:SetSolid(SOLID_VPHYSICS)
+		self:SetUseType(SIMPLE_USE)
 
 		local phys = self:GetPhysicsObject()
 
@@ -32,30 +34,91 @@ function ENT:Initialize()
 		end
 	end
 
-	if CLIENT then
-		self:SetRenderBounds(mins, maxs)
-	end
-
 	self:DrawShadow(false)
-
 	self:EnableCustomCollisions(true)
 end
 
+function ENT:SetupDataTables()
+	self:NetworkVar("String", 0, "VoxelModel")
+end
+
+function ENT:SetupPhysics()
+	local mins, maxs = voxel.GetHull(self:GetVoxelModel(), self.Scale)
+
+	self.PhysCollide = CreatePhysCollideBox(mins, maxs)
+	self:SetCollisionBounds(mins, maxs)
+
+	if SERVER then
+		self:PhysicsInitBox(mins, maxs)
+		self:SetSolid(SOLID_VPHYSICS)
+
+		local phys = self:GetPhysicsObject()
+
+		if IsValid(phys) then
+			phys:EnableMotion(false)
+		end
+	end
+
+	if CLIENT then
+		self:SetRenderBounds(mins, maxs)
+	end
+end
+
 if SERVER then
+	util.AddNetworkString("nSetVoxelModel")
+
+	net.Receive("nSetVoxelModel", function(_, ply)
+		local ent = net.ReadEntity()
+
+		if ply != ent.Editing then
+			return
+		end
+
+		ent:SetVoxelModel(net.ReadString())
+		ent:SetupPhysics()
+	end)
+
+	function ENT:Use(ply)
+		self.Editing = ply
+
+		net.Start("nSetVoxelModel")
+			net.WriteEntity(self)
+		net.Send(ply)
+	end
+
 	function ENT:OnTakeDamage(dmg)
 		debugoverlay.Cross(dmg:GetDamagePosition(), 1)
 	end
 end
 
 if CLIENT then
+	net.Receive("nSetVoxelModel", function()
+		local ent = net.ReadEntity()
+		local dmenu = DermaMenu()
+
+		for _, v in SortedPairsByValue(table.GetKeys(voxel.Models)) do
+			dmenu:AddOption(v, function()
+				net.Start("nSetVoxelModel")
+					net.WriteEntity(ent)
+					net.WriteString(v)
+				net.SendToServer()
+			end)
+
+			dmenu:Open()
+		end
+	end)
+
 	function ENT:Draw()
 		self:DrawModel()
 
-		voxel.DrawDebug(self.Model, self:GetPos(), self:GetAngles(), self.Scale, self)
+		if LocalPlayer():GetActiveWeapon():GetClass() != "gmod_camera" then
+			voxel.DrawDebug(self:GetVoxelModel(), self:GetPos(), self:GetAngles(), self.Scale, self)
+		end
 	end
 
 	function ENT:GetRenderMesh()
-		local data = voxel.Models[self.Model]
+		local model = self:GetVoxelModel()
+		local data = voxel.Models[model]
 		local matrix = Matrix()
 
 		matrix:SetAngles(data.Angle)
@@ -63,13 +126,13 @@ if CLIENT then
 
 		return {
 			Mesh = data.Mesh,
-			Material = Material("!voxel_" .. self.Model),
+			Material = Material("!voxel_" .. model),
 			Matrix = matrix
 		}
 	end
 
 	function ENT:OnReloaded()
-		self:SetRenderBounds(voxel.GetHull(self.Model, self.Scale))
+		self:SetRenderBounds(voxel.GetHull(self:GetVoxelModel(), self.Scale))
 	end
 end
 
