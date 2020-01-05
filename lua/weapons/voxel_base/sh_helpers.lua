@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-function SWEP:TrySound(snd)
+function SWEP:PlaySound(snd)
 	if not snd then
 		return
 	end

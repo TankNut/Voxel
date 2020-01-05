@@ -48,8 +48,7 @@ SWEP.AimDistance 			= 10
 SWEP.UseScope 				= false
 SWEP.Zoom 					= 2
 
-SWEP.FireSound 				= false
-SWEP.ReloadSound 			= false
+SWEP.Sound 					= {}
 
 SWEP.FireAnimation 			= true
 
@@ -233,7 +232,7 @@ function SWEP:FireWeapon(ply)
 		end
 	})
 
-	self:TrySound(self.FireSound)
+	self:PlaySound(self.Sound.Fire)
 end
 
 function SWEP:SecondaryAttack()
@@ -262,7 +261,7 @@ function SWEP:Reload()
 
 	self.Owner:SetAnimation(PLAYER_RELOAD)
 
-	self:TrySound(self.ReloadSound)
+	self:PlaySound(self.Sound.Reload)
 	self:SetFinishReload(CurTime() + self.ReloadTime)
 end
 

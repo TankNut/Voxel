@@ -37,8 +37,10 @@ SWEP.RecoilMult 			= 2
 
 SWEP.AimDistance 			= 10
 
-SWEP.FireSound 				= Sound("voxel/plasma_shoot.wav")
-SWEP.OverheatSound 			= Sound("voxel/plasma_overheat.wav")
+SWEP.Sound = {
+	Fire = Sound("voxel/plasma_shoot.wav"),
+	Overheat = Sound("voxel/plasma_overheat.wav"),
+}
 
 SWEP.HeatRate 				= 4
 SWEP.CoolRate 				= 40
@@ -151,9 +153,9 @@ function SWEP:FireWeapon(ply)
 
 	if self:GetHeat() > 100 then
 		self:SetOverheating(true)
-		self:TrySound(self.OverheatSound)
+		self:PlaySound(self.Sound.Overheat)
 	else
-		self:TrySound(self.FireSound)
+		self:PlaySound(self.Sound.Fire)
 	end
 
 	if IsFirstTimePredicted() then
