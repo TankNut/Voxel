@@ -38,8 +38,10 @@ SWEP.RecoilMult 			= 2
 SWEP.AimDistance 			= 10
 
 SWEP.FireSound 				= Sound("voxel/plasmashoot.wav")
+SWEP.OverheatSound 			= Sound("pillar/plasrifle_overheat.wav")
 
-SWEP.ReloadTime 			= 2.5
+SWEP.HeatRate 				= 4
+SWEP.CoolRate 				= 40
 
 SWEP.VMOffset = {
 	Pos = Vector(16, -8, -7)
@@ -55,6 +57,11 @@ SWEP.VMLower = {
 	Ang = Angle(20, 0, 0)
 }
 
+SWEP.ReloadLower = {
+	Pos = Vector(0, -2, 1),
+	Ang = Angle(-30, 10, 0)
+}
+
 SWEP.ActivityOverrides = {
 	pistol = {
 		[ACT_MP_ATTACK_STAND_PRIMARYFIRE] = ACT_HL2MP_GESTURE_RANGE_ATTACK_SMG1,
@@ -66,6 +73,23 @@ function SWEP:SetupDataTables()
 	self.BaseClass.SetupDataTables(self)
 
 	self:NetworkVar("Bool", 0, "MuzzleIndex")
+	self:NetworkVar("Bool", 1, "Overheating")
+
+	self:NetworkVar("Float", 2, "Heat")
+end
+
+function SWEP:IsReloading()
+	return self:GetOverheating()
+end
+
+function SWEP:ReloadThink(delta)
+	if not self:IsFiring() then
+		self:SetHeat(math.max(self:GetHeat() - (self.CoolRate * delta), 0))
+
+		if self:GetOverheating() and self:GetHeat() == 0 then
+			self:SetOverheating(false)
+		end
+	end
 end
 
 if CLIENT then
@@ -84,6 +108,10 @@ if CLIENT then
 	local beam = Material("effects/voxel/plasma_beam")
 
 	function SWEP:DrawBeam(pos, ang)
+		if self:GetOverheating() then
+			return
+		end
+
 		local pos1 = voxel.GetPos(self.Model, pos, ang, self.ModelScale, 1)
 		local pos2 = voxel.GetPos(self.Model, pos, ang, self.ModelScale, 2)
 
@@ -117,6 +145,15 @@ function SWEP:FireWeapon(ply)
 
 		ent:Spawn()
 		ent:Activate()
+	end
+
+	self:SetHeat(self:GetHeat() + self.HeatRate)
+
+	if self:GetHeat() > 100 then
+		self:SetOverheating(true)
+		self:TrySound(self.OverheatSound)
+	else
+		self:TrySound(self.FireSound)
 	end
 
 	if IsFirstTimePredicted() then
