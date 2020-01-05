@@ -39,8 +39,8 @@ SWEP.RecoilMult 			= 2
 
 SWEP.AimDistance 			= 10
 
-SWEP.FireSound 				= Sound("voxel/smgshoot.wav")
-SWEP.ReloadSound 			= Sound("voxel/smgreload.wav")
+SWEP.FireSound 				= Sound("voxel/smg_shoot.wav")
+SWEP.ReloadSound 			= Sound("voxel/smg_reload.wav")
 
 SWEP.ReloadTime 			= 2.5
 
