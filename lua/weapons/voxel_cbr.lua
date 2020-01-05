@@ -40,6 +40,8 @@ SWEP.ConstantRecoil 		= true
 
 SWEP.AimDistance 			= 10
 
+SWEP.LoopSound 				= Sound("ambient/energy/force_field_loop1.wav")
+
 SWEP.FireAnimation 			= false
 
 SWEP.VMOffset = {
@@ -47,15 +49,15 @@ SWEP.VMOffset = {
 }
 
 function SWEP:StartFiring()
-	self:EmitSound("ambient/energy/force_field_loop1.wav")
+	self:TrySound(self.LoopSound)
 end
 
 function SWEP:StopFiring()
-	self:StopSound("ambient/energy/force_field_loop1.wav")
+	self:StopSound(self.LoopSound)
 end
 
 function SWEP:OnRemove()
-	self:StopSound("ambient/energy/force_field_loop1.wav")
+	self:StopSound(self.LoopSound)
 end
 
 function SWEP:DoImpactEffect()
