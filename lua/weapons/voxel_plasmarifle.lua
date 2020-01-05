@@ -38,7 +38,7 @@ SWEP.RecoilMult 			= 2
 SWEP.AimDistance 			= 10
 
 SWEP.FireSound 				= Sound("voxel/plasmashoot.wav")
-SWEP.OverheatSound 			= Sound("pillar/plasrifle_overheat.wav")
+SWEP.OverheatSound 			= Sound("voxel/plasmaoverheat.wav")
 
 SWEP.HeatRate 				= 4
 SWEP.CoolRate 				= 40
