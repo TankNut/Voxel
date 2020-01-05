@@ -50,6 +50,10 @@ function SWEP:ShouldLower()
 	return false
 end
 
+function SWEP:IsFiring()
+	return self:GetFireDuration() != -1
+end
+
 function SWEP:IsReloading()
 	return self:GetFinishReload() > CurTime()
 end

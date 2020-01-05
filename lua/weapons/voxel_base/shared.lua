@@ -181,7 +181,7 @@ function SWEP:PrimaryAttack()
 
 	local ply = self.Owner
 
-	if self:GetFireDuration() == -1 and IsFirstTimePredicted() then
+	if not self:IsFiring() and IsFirstTimePredicted() then
 		self:SetFireDuration(0)
 		self:StartFiring()
 	end
@@ -211,8 +211,6 @@ function SWEP:PrimaryAttack()
 		self:DoRecoil()
 	end
 
-	self:TrySound(self.FireSound)
-
 	self:SetNextPrimaryFire(CurTime() + self.Delay)
 end
 
@@ -234,6 +232,8 @@ function SWEP:FireWeapon(ply)
 			dmg:SetDamageType(self.DamageType)
 		end
 	})
+
+	self:TrySound(self.FireSound)
 end
 
 function SWEP:SecondaryAttack()
@@ -289,7 +289,7 @@ function SWEP:Think()
 		end
 	end
 
-	self:ReloadThink()
+	self:ReloadThink(delta)
 
 	if CLIENT then
 		self:ScopeThink()
@@ -298,7 +298,7 @@ function SWEP:Think()
 	self.LastThink = CurTime()
 end
 
-function SWEP:ReloadThink()
+function SWEP:ReloadThink(delta)
 	local finish = self:GetFinishReload()
 
 	if finish != 0 and finish <= CurTime() then

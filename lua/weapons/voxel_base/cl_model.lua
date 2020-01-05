@@ -158,7 +158,7 @@ function SWEP:GetVMPos()
 	local basepos, baseang = self:GetBaseVMPos()
 	local offpos, offang = self:GetVMOffset(dt)
 
-	if not self.ConstantRecoil or self:GetFireDuration() == -1 then
+	if not self.ConstantRecoil or not self:IsFiring() then
 		self.RecoilFactor = math.max(self.RecoilFactor - (dt * 10), 0)
 	end
 
