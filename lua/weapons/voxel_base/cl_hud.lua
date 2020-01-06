@@ -76,3 +76,11 @@ function SWEP:DrawHUDBackground()
 		surface.DrawTexturedRect((w * 0.5) - (width * 0.5), 0, width, h)
 	end
 end
+
+function SWEP:HUDShouldDraw(name)
+	if name == "CHudWeaponSelection" and self.Scoped then
+		return false
+	end
+
+	return true
+end

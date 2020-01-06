@@ -45,9 +45,7 @@ SWEP.ConstantRecoil 		= false
 
 SWEP.AimDistance 			= 10
 
-SWEP.UseScope 				= false
-SWEP.Zoom 					= 2
-
+SWEP.Scope 					= {}
 SWEP.Sound 					= {}
 
 SWEP.FireAnimation 			= true
@@ -124,11 +122,15 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 
 	self.LastThink = CurTime()
+
+	self:SetZoomIndex(1)
 end
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 0, "FireDuration")
 	self:NetworkVar("Float", 1, "FinishReload")
+
+	self:NetworkVar("Int", 0, "ZoomIndex")
 end
 
 function SWEP:Deploy()
@@ -289,10 +291,7 @@ function SWEP:Think()
 	end
 
 	self:ReloadThink(delta)
-
-	if CLIENT then
-		self:ScopeThink()
-	end
+	self:ScopeThink()
 
 	self.LastThink = CurTime()
 end
@@ -312,6 +311,33 @@ function SWEP:ReloadThink(delta)
 	end
 end
 
+function SWEP:ScopeThink()
+	if not self.Scope.Enabled then
+		return
+	end
+
+	if self:AimingDownSights() and istable(self.Scope.Zoom) and (not game.SinglePlayer() or SERVER) then
+		local cmd = self.Owner:GetCurrentCommand()
+		local wheel = math.Clamp(cmd:GetMouseWheel(), -1, 1)
+
+		if wheel != 0 then
+			local index = self:GetZoomIndex() + wheel
+
+			if index > 0 and index <= #self.Scope.Zoom then
+				self:SetZoomIndex(index)
+			end
+		end
+	end
+
+	if CLIENT then
+		if not self:AimingDownSights() or self:IsReloading() then
+			self.Scoped = false
+		elseif not self.Scoped and self:GetADSFactor() > 0.9 then
+			self.Scoped = true
+		end
+	end
+end
+
 function SWEP:StartFiring()
 end
 
@@ -325,27 +351,25 @@ if CLIENT then
 	function SWEP:AdjustMouseSensitivity()
 		return (LocalPlayer():GetFOV() / fov:GetFloat()) * ratio:GetFloat()
 	end
+end
 
-	function SWEP:ScopeThink()
-		if not self.UseScope then
-			return
-		end
+function SWEP:GetZoomLevel()
+	local zoom = self.Scope.Zoom
 
-		if not self:AimingDownSights() or self:IsReloading() then
-			self.Scoped = false
-		elseif not self.Scoped and self:GetADSFactor() > 0.9 then
-			self.Scoped = true
-		end
+	if istable(zoom) then
+		zoom = zoom[self:GetZoomIndex()]
 	end
+
+	return zoom
 end
 
 function SWEP:TranslateFOV(fov)
-	if not self.UseScope then
+	if not self.Scope.Enabled then
 		return fov
 	end
 
 	if (CLIENT and self.Scoped) or (SERVER and self:AimingDownSights()) then
-		return fov / self.Zoom
+		return fov / self:GetZoomLevel()
 	end
 end
 

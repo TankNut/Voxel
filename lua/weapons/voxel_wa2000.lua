@@ -39,8 +39,10 @@ SWEP.RecoilMult 			= 3
 
 SWEP.AimDistance 			= 2
 
-SWEP.UseScope 				= true
-SWEP.Zoom 					= 10
+SWEP.Scope = {
+	Enabled = true,
+	Zoom = {2.5, 5, 10, 20}
+}
 
 SWEP.Sound = {
 	Fire 	= Sound("voxel/semi_shoot.wav"),
