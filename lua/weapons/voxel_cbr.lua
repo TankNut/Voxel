@@ -34,7 +34,7 @@ SWEP.DamageType 			= DMG_ENERGYBEAM
 SWEP.Spread 				= 0.005
 
 SWEP.Delay 					= 0.02
-SWEP.Recoil 				= Vector(0.005, 0.003, 0)
+SWEP.Recoil 				= Vector(0.0025, 0.0015, 0)
 SWEP.RecoilMult 			= 3
 SWEP.ConstantRecoil 		= true
 

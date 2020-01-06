@@ -29,7 +29,7 @@ SWEP.MuzzleEffect 			= "voxel_muzzle_ar2"
 SWEP.HoldType 				= "pistol"
 SWEP.HoldTypeLower 			= "normal"
 
-SWEP.Spread 				= 0.012
+SWEP.Spread 				= 0.03
 
 SWEP.Delay 					= 0.133
 SWEP.Recoil 				= Vector(0.0075, 0.006, 0)
