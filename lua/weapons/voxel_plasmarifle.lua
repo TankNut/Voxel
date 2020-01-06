@@ -126,6 +126,13 @@ if CLIENT then
 
 		self:DrawBeam(pos, ang)
 	end
+
+	function SWEP:CustomAmmoDisplay()
+		return {
+			Draw = true,
+			PrimaryClip = 100 - self:GetHeat()
+		}
+	end
 end
 
 function SWEP:FireWeapon(ply)
@@ -151,7 +158,7 @@ function SWEP:FireWeapon(ply)
 
 	self:SetHeat(self:GetHeat() + self.HeatRate)
 
-	if self:GetHeat() > 100 then
+	if self:GetHeat() >= 100 then
 		self:SetOverheating(true)
 		self:PlaySound(self.Sound.Overheat)
 	else
