@@ -77,5 +77,6 @@ if CLIENT then
 
 		render.SetMaterial(sprite)
 		render.DrawSprite(pos, 8, 8)
+		render.DrawSprite(pos, 8, 8)
 	end
 end
