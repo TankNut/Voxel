@@ -29,9 +29,13 @@ SWEP.MuzzleEffect 			= "voxel_muzzle_ar2"
 SWEP.HoldType 				= "pistol"
 SWEP.HoldTypeLower 			= "normal"
 
-SWEP.Spread 				= 0.03
+SWEP.Spread 				= 0.02
 
-SWEP.Delay 					= 0.133
+SWEP.DelayRamp 				= 0.8
+
+SWEP.MinDelay 				= 0.11
+SWEP.MaxDelay 				= 0.16
+
 SWEP.Recoil 				= Vector(0.0075, 0.006, 0)
 SWEP.RecoilMult 			= 2
 
@@ -92,6 +96,10 @@ function SWEP:ReloadThink(delta)
 			self:SetOverheating(false)
 		end
 	end
+end
+
+function SWEP:GetDelay()
+	return self:GetFireDuration() > self.DelayRamp and self.MinDelay or self.MaxDelay
 end
 
 if CLIENT then
