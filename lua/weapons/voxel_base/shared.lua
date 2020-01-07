@@ -168,6 +168,10 @@ function SWEP:CanAttack()
 	return true
 end
 
+function SWEP:GetDelay()
+	return self.Delay
+end
+
 function SWEP:PrimaryAttack()
 	if not self:CanAttack() then
 		return
@@ -175,7 +179,7 @@ function SWEP:PrimaryAttack()
 
 	if self.Primary.ClipSize > 0 and self:Clip1() <= 0 then
 		self:EmitSound("voxel/empty.wav")
-		self:SetNextPrimaryFire(CurTime() + self.Delay * 2)
+		self:SetNextPrimaryFire(CurTime() + 0.2)
 
 		return
 	end
@@ -212,7 +216,7 @@ function SWEP:PrimaryAttack()
 		self:DoRecoil()
 	end
 
-	self:SetNextPrimaryFire(CurTime() + self.Delay)
+	self:SetNextPrimaryFire(CurTime() + self:GetDelay())
 end
 
 function SWEP:FireWeapon(ply)
