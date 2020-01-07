@@ -69,7 +69,7 @@ function SWEP:GetVMOffset(dt)
 	if len < threshold or not ply:OnGround() then
 		local mult = 1
 
-		if ply:KeyDown(IN_ATTACK2) then
+		if self:AimingDownSights() then
 			mult = 0.2
 		end
 
@@ -88,7 +88,7 @@ function SWEP:GetVMOffset(dt)
 		local mult = math.Clamp(len / walk, 0, 1)
 		local mult2 = Vector(1, 1, 1)
 
-		if ply:KeyDown(IN_ATTACK2) then
+		if self:AimingDownSights() then
 			mult2 = Vector(0.3, 0.2, 0.25)
 		end
 
