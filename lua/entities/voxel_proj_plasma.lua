@@ -11,7 +11,7 @@ ENT.AdminSpawnable 			= false
 
 ENT.AutomaticFrameAdvance	= true
 
-ENT.Velocity 				= 6608
+ENT.Velocity 				= 6350
 
 ENT.UseGravity 				= false
 
@@ -33,18 +33,23 @@ function ENT:Initialize()
 end
 
 if SERVER then
-	function ENT:OnHit()
+	function ENT:OnHit(tr)
 		self:FireBullets({
 			Src = self:GetPos(),
 			Dir = self:GetForward(),
 			Attacker = self:GetOwner(),
 			Spread = Vector(0, 0, 0),
 			Tracer = 0,
-			Damage = 16,
-			Callback = function(attacker, tr, dmg)
+			Damage = math.random(6, 10),
+			Callback = function(attacker, trace, dmg)
 				dmg:SetDamageType(DMG_ENERGYBEAM)
 			end
 		})
+
+		self:SetPos(tr.HitPos)
+		self:SetStopPos(tr.HitPos)
+
+		SafeRemoveEntityDelayed(self, 1)
 	end
 end
 

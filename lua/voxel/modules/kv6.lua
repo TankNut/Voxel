@@ -35,17 +35,6 @@ function Import(f)
 		offsets[i] = f:ReadUShort()
 	end
 
-	-- Verify that the offset and block list match
-	local sum = 0
-
-	for i = 0, #offsets - 1 do
-		sum = sum + offsets[i]
-	end
-
-	if sum != blockcount then
-		error("File corrupted: offset sum != blockcount")
-	end
-
 	-- Move the blocks and color data into a format we can easily work with
 	local grid = {}
 	local pos = 0

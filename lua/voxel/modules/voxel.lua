@@ -210,6 +210,16 @@ function GetConvexHull(index, scale)
 	}
 end
 
+function GetAttachments(index)
+	local data = Models[index]
+
+	if not data then
+		return
+	end
+
+	return table.Copy(data.Attachments)
+end
+
 function HasAttachment(index, attachment)
 	local data = Models[index]
 

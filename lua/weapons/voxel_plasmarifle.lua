@@ -44,6 +44,7 @@ SWEP.AimDistance 			= 10
 SWEP.Sound = {
 	Fire = Sound("voxel/plasma_shoot.wav"),
 	Overheat = Sound("voxel/plasma_overheat.wav"),
+	OverheatExit = Sound("voxel/plasma_overheat_exit.wav")
 }
 
 SWEP.HeatRate 				= 4
@@ -94,6 +95,7 @@ function SWEP:ReloadThink(delta)
 
 		if self:GetOverheating() and self:GetHeat() == 0 then
 			self:SetOverheating(false)
+			self:PlaySound(self.Sound.OverheatExit)
 		end
 	end
 end

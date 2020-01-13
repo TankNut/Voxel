@@ -60,10 +60,6 @@ if SERVER then
 
 		if tr.Fraction != 1 then
 			self:OnHit(tr)
-			self:SetPos(tr.HitPos)
-			self:SetStopPos(tr.HitPos)
-
-			SafeRemoveEntityDelayed(self, 1)
 
 			return
 		end
@@ -78,5 +74,9 @@ if SERVER then
 	end
 
 	function ENT:OnHit(tr)
+		self:SetPos(tr.HitPos)
+		self:SetStopPos(tr.HitPos)
+
+		SafeRemoveEntityDelayed(self, 1)
 	end
 end
