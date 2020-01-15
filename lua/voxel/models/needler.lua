@@ -1,5 +1,5 @@
 RegisterVoxel("needler", {
-	Mesh = "voxel/meshes/needler.kv6",
+	Mesh = "voxel/meshes/needler.lua",
 	Offset = Vector(-1, -8, -7),
 	Angle = Angle(180, -90, 0),
 	Attachments = {
