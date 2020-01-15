@@ -38,7 +38,7 @@ SWEP.MaxDelay 				= 0.125
 SWEP.Recoil 				= Vector(0.0125, 0.01275, 0)
 SWEP.RecoilMult 			= 2
 
-SWEP.AimDistance 			= 10
+SWEP.AimDistance 			= 5
 
 SWEP.Sound = {
 	Fire 	= {
@@ -91,14 +91,47 @@ function SWEP:FireWeapon(ply)
 		aimcone:RotateAroundAxis(Vector(1, 0, 0), math.Rand(0, 360))
 
 		local pos = ply:GetShootPos()
-		local ang = (self:GetAimAngle() + aimcone):Forward():Angle()
+		local targets = ents.FindInCone(pos, self:GetAimAngle():Forward(), 2048, math.cos(math.rad(15)))
 
+		local target
+		local maxdist = math.huge
+
+		for _, v in pairs(targets) do
+			if not IsValid(v) or not (v:IsNPC() or v:IsPlayer()) then
+				continue
+			end
+
+			if v:Health() <= 0 then
+				continue
+			end
+
+			local center = v:WorldSpaceCenter()
+
+			if not self.Owner:VisibleVec(center) then
+				continue
+			end
+
+			local dist = pos:DistToSqr(center)
+
+			if dist >= maxdist then
+				continue
+			end
+
+			target = v
+			maxdist = dist
+		end
+
+		local ang = (self:GetAimAngle() + aimcone):Forward():Angle()
 		local ent = ents.Create("voxel_proj_needler")
 
 		ent:SetPos(pos)
 		ent:SetAngles(ang)
 
 		ent:SetOwner(ply)
+
+		if IsValid(target) then
+			ent:SetTarget(target)
+		end
 
 		ent:Spawn()
 		ent:Activate()

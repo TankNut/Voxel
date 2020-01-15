@@ -47,7 +47,7 @@ if SERVER then
 		local delta = CurTime() - self.LastThink
 
 		self:SetVel(self:GetVel() + (grav * delta))
-		self:Process()
+		self:Process(delta)
 
 		local pos = self:GetPos() + self:GetVel() * delta
 

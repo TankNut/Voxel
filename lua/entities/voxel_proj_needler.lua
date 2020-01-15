@@ -15,21 +15,12 @@ ENT.Velocity 				= 2794
 
 ENT.UseGravity 				= false
 
-ENT.Length 					= 64
+ENT.TurnRate 				= 15
 
-function ENT:Initialize()
-	self.BaseClass.Initialize(self)
+function ENT:SetupDataTables()
+	self.BaseClass.SetupDataTables(self)
 
-	self:DrawShadow(false)
-
-	if CLIENT then
-		local pos = self:GetPos()
-		local mins, maxs = pos, pos + (self:GetForward() * -self.Length)
-
-		OrderVectors(mins, maxs)
-
-		self:SetRenderBoundsWS(mins, maxs)
-	end
+	self:NetworkVar("Entity", 0, "Target")
 end
 
 if SERVER then
@@ -65,6 +56,34 @@ if SERVER then
 		end
 
 		self:NextThink(CurTime() + (self.SuperCombine and 0.35 or 4))
+	end
+
+	function ENT:Process(delta)
+		local target = self:GetTarget()
+
+		if not IsValid(target) then
+			return
+		end
+
+		local center = target:WorldSpaceCenter()
+
+		local diff = (center - self:GetPos()):Angle()
+		local vel = self:GetVel()
+
+		local speed = vel:Length()
+		local ang = vel:Angle()
+
+		local localang = self:WorldToLocalAngles(diff)
+
+		if localang.y > 90 or localang.y < -90 then
+			return
+		end
+
+		ang.p = math.ApproachAngle(ang.p, diff.p, self.TurnRate * delta)
+		ang.y = math.ApproachAngle(ang.y, diff.y, self.TurnRate * delta)
+		ang.r = 0
+
+		self:SetVel(ang:Forward() * speed)
 	end
 
 	function ENT:Think()
