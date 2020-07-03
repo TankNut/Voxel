@@ -188,12 +188,10 @@ function SWEP:GetWorldPos()
 	local ang = self:GetAngles()
 
 	if IsValid(self.Owner) then
-		local index = self.Owner:LookupAttachment("anim_attachment_RH")
-		local att = self.Owner:GetAttachment(index)
+		local index = self.Owner:LookupBone("ValveBiped.Bip01_R_Hand")
 
-		if istable(att) then
-			pos, ang = LocalToWorld(self.WMOffset.Pos, self.WMOffset.Ang, att.Pos, att.Ang + Angle(-10, 0, -5))
-		end
+		pos, ang = self.Owner:GetBonePosition(index)
+		pos, ang = LocalToWorld(self.WMOffset.Pos, self.WMOffset.Ang, pos, ang + Angle(-10, 0, 180))
 	end
 
 	return pos, ang

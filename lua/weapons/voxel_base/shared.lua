@@ -57,7 +57,7 @@ SWEP.VMOffset = {
 }
 
 SWEP.WMOffset = {
-	Pos = Vector(0, -1, 0),
+	Pos = Vector(2, 0.5, 0),
 	Ang = Angle()
 }
 
