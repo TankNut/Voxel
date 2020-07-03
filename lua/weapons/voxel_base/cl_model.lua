@@ -38,8 +38,7 @@ function SWEP:GetVMSway(dt)
 	local eye = EyeAngles()
 
 	self.EyeDelta = Angle(eye.p, eye.y, 0) - self.OldEye
-
-	self.EyeDelta:Normalize()
+	self.EyeDelta.y = math.NormalizeAngle(self.EyeDelta.y)
 
 	self.EyeDelta.p = math.Clamp(self.EyeDelta.p, -5, 5)
 	self.EyeDelta.y = math.Clamp(self.EyeDelta.y, -5, 5)
@@ -148,11 +147,13 @@ SWEP.StoreAng = Angle()
 
 SWEP.LastVMTime = 0
 
-SWEP.CachedVMPos = Vector()
-SWEP.CachedVMAng = Angle()
-
 function SWEP:GetVMPos()
 	local dt = CurTime() - self.LastVMTime
+
+	if dt <= 0 then
+		return LocalToWorld((self.StorePos * self.ModelScale) + (self.VMOffset.Pos * self.ModelScale), self.StoreAng, EyePos(), EyeAngles())
+	end
+
 	local pos, ang = Vector(), Angle()
 
 	local basepos, baseang = self:GetBaseVMPos()

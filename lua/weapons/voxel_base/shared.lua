@@ -88,7 +88,9 @@ end
 include("sh_helpers.lua")
 include("sh_recoil.lua")
 
-include("sv_npc.lua")
+if SERVER then
+	include("sv_npc.lua")
+end
 
 function SWEP:Initialize()
 	local mins, maxs = voxel.GetHull(self.Model, self.ModelScale)
